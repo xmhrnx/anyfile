@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mehran9675/giode/i18n"
+	"github.com/xmhrnx/giode/i18n"
 )
 
 // TrID comes from its author's site as a zip per platform plus the

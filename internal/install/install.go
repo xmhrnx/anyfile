@@ -18,8 +18,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mehran9675/giode/i18n"
 	"github.com/xmhrnx/anyfile/internal/tools"
+	"github.com/xmhrnx/giode/i18n"
 )
 
 // Engine is a tool AnyFile can install.

@@ -16,8 +16,8 @@ import (
 
 	"github.com/xmhrnx/anyfile/internal/codec"
 
-	"github.com/mehran9675/giode/i18n"
 	"github.com/xmhrnx/anyfile/internal/cfb"
+	"github.com/xmhrnx/giode/i18n"
 )
 
 // refineZip tells the many ZIP-based formats apart by their members.

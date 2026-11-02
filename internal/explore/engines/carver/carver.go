@@ -9,10 +9,10 @@ import (
 
 	"github.com/xmhrnx/anyfile/internal/settings"
 
-	"github.com/mehran9675/giode/i18n"
 	"github.com/xmhrnx/anyfile/internal/carve"
 	"github.com/xmhrnx/anyfile/internal/detect"
 	"github.com/xmhrnx/anyfile/internal/explore"
+	"github.com/xmhrnx/giode/i18n"
 )
 
 func init() {

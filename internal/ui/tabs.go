@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/mehran9675/giode"
 	"github.com/xmhrnx/anyfile/internal/session"
+	"github.com/xmhrnx/giode"
 )
 
 // tab is one opened file: its own session (with its temp folder) and

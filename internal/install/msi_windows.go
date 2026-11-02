@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/mehran9675/giode/i18n"
 	"github.com/xmhrnx/anyfile/internal/tools"
+	"github.com/xmhrnx/giode/i18n"
 )
 
 // unpackMSI extracts a Windows Installer package with an administrative

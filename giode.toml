@@ -6,7 +6,7 @@
 
 [app]
 name = "AnyFile"
-id = "com.mehran9675.anyfile"
+id = "com.xmhrnx.anyfile"
 version = "0.0.0"
 build = 1
 icon = "assets/icon.png"

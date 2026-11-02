@@ -24,11 +24,11 @@ import (
 	"io"
 	"os"
 
-	"github.com/mehran9675/giode/i18n"
 	"github.com/xmhrnx/anyfile/internal/detect"
 	"github.com/xmhrnx/anyfile/internal/explore"
 	"github.com/xmhrnx/anyfile/internal/oggopus"
 	"github.com/xmhrnx/anyfile/internal/oodle"
+	"github.com/xmhrnx/giode/i18n"
 )
 
 func init() {

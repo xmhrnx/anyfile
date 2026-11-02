@@ -9,7 +9,7 @@ import (
 	"unicode/utf16"
 	"unicode/utf8"
 
-	"github.com/mehran9675/giode/i18n"
+	"github.com/xmhrnx/giode/i18n"
 )
 
 // textInfo is the outcome of the encoding analysis.

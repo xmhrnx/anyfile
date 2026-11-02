@@ -59,7 +59,7 @@ Translations live in `internal/locales/<language>.json` and are keyed by the Eng
 AnyFile is built with the [giode CLI](https://github.com/xmhrnx/giode-cli), configured by `giode.toml`:
 
 ```bash
-go install github.com/mehran9675/giode-cli/cmd/giode@latest
+go install github.com/xmhrnx/giode-cli/cmd/giode@latest
 ```
 
 ```bash

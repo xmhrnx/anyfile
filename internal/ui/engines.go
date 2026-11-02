@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/mehran9675/giode"
-	"github.com/mehran9675/giode/components/button"
 	"github.com/xmhrnx/anyfile/internal/install"
 	"github.com/xmhrnx/anyfile/internal/tools"
+	"github.com/xmhrnx/giode"
+	"github.com/xmhrnx/giode/components/button"
 )
 
 // engineInstall is the in-app installer of one engine: its buttons and,

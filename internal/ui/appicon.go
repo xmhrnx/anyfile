@@ -6,8 +6,8 @@ import (
 	"image"
 	"image/png"
 
-	"github.com/mehran9675/giode"
-	"github.com/mehran9675/giode/styles/properties"
+	"github.com/xmhrnx/giode"
+	"github.com/xmhrnx/giode/styles/properties"
 )
 
 // iconPNG is the app icon, drawn once at design time (256×256).

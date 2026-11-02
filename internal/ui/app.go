@@ -13,15 +13,15 @@ import (
 
 	"gioui.org/layout"
 
-	"github.com/mehran9675/giode"
-	"github.com/mehran9675/giode/components/button"
-	"github.com/mehran9675/giode/components/titlebar"
 	"github.com/xmhrnx/anyfile/internal/explore"
 	"github.com/xmhrnx/anyfile/internal/oodle"
 	"github.com/xmhrnx/anyfile/internal/platform"
 	"github.com/xmhrnx/anyfile/internal/session"
 	"github.com/xmhrnx/anyfile/internal/settings"
 	"github.com/xmhrnx/anyfile/internal/tools"
+	"github.com/xmhrnx/giode"
+	"github.com/xmhrnx/giode/components/button"
+	"github.com/xmhrnx/giode/components/titlebar"
 )
 
 // UI is the application window.
@@ -77,7 +77,7 @@ func Run(args []string, version string) error {
 	// One window: files opened while AnyFile runs, from the command line
 	// or the file manager's "Inspect with AnyFile", become tabs in it.
 	cfg.SingleInstanceLock = &giode.SingleInstanceLock{
-		UniqueID:     "com.mehran9675.anyfile",
+		UniqueID:     "com.xmhrnx.anyfile",
 		OnLaunchArgs: func(args []string) { u.openPaths(fileArgs(args)) },
 	}
 	// Also in giode.toml, for the Windows installer and the macOS app;

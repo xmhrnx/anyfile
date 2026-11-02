@@ -10,10 +10,10 @@ import (
 
 	"github.com/xmhrnx/anyfile/internal/settings"
 
-	"github.com/mehran9675/giode/i18n"
 	"github.com/xmhrnx/anyfile/internal/carve"
 	"github.com/xmhrnx/anyfile/internal/cfb"
 	"github.com/xmhrnx/anyfile/internal/tools"
+	"github.com/xmhrnx/giode/i18n"
 )
 
 // Options tune Detect.

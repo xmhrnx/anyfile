@@ -5,16 +5,16 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mehran9675/giode"
-	"github.com/mehran9675/giode/components/button"
-	"github.com/mehran9675/giode/components/dropdown"
-	"github.com/mehran9675/giode/components/input"
-	"github.com/mehran9675/giode/components/scroll"
-	"github.com/mehran9675/giode/components/segmented"
-	"github.com/mehran9675/giode/components/toggle"
 	"github.com/xmhrnx/anyfile/internal/locales"
 	"github.com/xmhrnx/anyfile/internal/platform"
 	"github.com/xmhrnx/anyfile/internal/settings"
+	"github.com/xmhrnx/giode"
+	"github.com/xmhrnx/giode/components/button"
+	"github.com/xmhrnx/giode/components/dropdown"
+	"github.com/xmhrnx/giode/components/input"
+	"github.com/xmhrnx/giode/components/scroll"
+	"github.com/xmhrnx/giode/components/segmented"
+	"github.com/xmhrnx/giode/components/toggle"
 )
 
 // settingsPage edits the limits and preferences in package settings.
@@ -115,7 +115,7 @@ func newSettingsPage(u *UI) *settingsPage {
 	for _, l := range locales.Languages {
 		langs = append(langs, l.Name)
 	}
-	sp.language = giode.Input.Select(field.With(giode.Styles{Width: 220}), langs...).
+	sp.language = giode.Input.Select(field.With(giode.Styles{Width: 220, MaxHeight: 400, Overflow: giode.OverflowVisible}), langs...).
 		OnChange(func(i int) {
 			loc := ""
 			if i > 0 {

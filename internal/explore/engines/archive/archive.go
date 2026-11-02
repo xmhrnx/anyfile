@@ -19,9 +19,9 @@ import (
 
 	"github.com/xmhrnx/anyfile/internal/codec"
 
-	"github.com/mehran9675/giode/i18n"
 	"github.com/xmhrnx/anyfile/internal/detect"
 	"github.com/xmhrnx/anyfile/internal/explore"
+	"github.com/xmhrnx/giode/i18n"
 )
 
 func init() {

@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mehran9675/giode"
-	"github.com/mehran9675/giode/components/button"
-	"github.com/mehran9675/giode/components/scroll"
 	"github.com/xmhrnx/anyfile/internal/detect"
 	"github.com/xmhrnx/anyfile/internal/platform"
 	"github.com/xmhrnx/anyfile/internal/session"
 	"github.com/xmhrnx/anyfile/internal/tools"
+	"github.com/xmhrnx/giode"
+	"github.com/xmhrnx/giode/components/button"
+	"github.com/xmhrnx/giode/components/scroll"
 )
 
 // inspector is the right panel: what the selected item is, what can be
