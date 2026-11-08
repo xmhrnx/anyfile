@@ -123,14 +123,15 @@ const contextInspect = "inspect"
 
 // fileArgs returns the command-line arguments that name files to open:
 // none for a context action, which giode delivers to OnContextAction,
-// and no flags.
+// and no flags, including the /Embedding COM may start the app with when
+// Explorer hands it a selection.
 func fileArgs(args []string) []string {
 	var out []string
 	for _, a := range args {
 		if strings.HasPrefix(a, "--giode-action=") {
 			return nil
 		}
-		if !strings.HasPrefix(a, "-") {
+		if !strings.HasPrefix(a, "-") && !strings.EqualFold(a, "/Embedding") {
 			out = append(out, a)
 		}
 	}
