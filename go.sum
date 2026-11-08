@@ -46,8 +46,8 @@ github.com/stretchr/testify v1.6.1 h1:hDPOHmpOpP40lSULcqw7IrRb/u7w6RpDC9399XyoNd
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/ulikunitz/xz v0.5.17 h1:flR0y/x1hgM8EGV1AW3Xll6T413G0glV8UfBwR617V4=
 github.com/ulikunitz/xz v0.5.17/go.mod h1:H9Rt/W6/Qj27PGauhQc6nfCDy7vHpzsOThBSaYDoEhw=
-github.com/xmhrnx/giode v0.1.27-alpha.1 h1:lXDICgByqVMY3NKixmJAp2HguC7+CE8KjueTFWCW8bk=
-github.com/xmhrnx/giode v0.1.27-alpha.1/go.mod h1:88XFQNpZw806ytdMrkUB2znIFm+n4OMxJBzKlRe5d5A=
+github.com/xmhrnx/giode v1.0.0-alpha.1 h1:kh0QaL2d2mksXU7XlB4PPoU3y44kqA7RvCtQGGrJ1sY=
+github.com/xmhrnx/giode v1.0.0-alpha.1/go.mod h1:88XFQNpZw806ytdMrkUB2znIFm+n4OMxJBzKlRe5d5A=
 github.com/yuin/goldmark v1.4.13 h1:fVcFKWvrslecOb/tg+Cc05dkeYx540o0FuFt3nUVDoE=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=

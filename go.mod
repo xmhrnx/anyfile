@@ -7,7 +7,7 @@ require (
 	github.com/klauspost/compress v1.20.3
 	github.com/ncruces/zenity v0.10.15
 	github.com/ulikunitz/xz v0.5.17
-	github.com/xmhrnx/giode v0.1.27-alpha.1
+	github.com/xmhrnx/giode v1.0.0-alpha.1
 	golang.org/x/sys v0.47.0
 )
 
