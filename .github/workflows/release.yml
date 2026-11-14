@@ -68,8 +68,17 @@ jobs:
       - name: Build app and installer
         run: |
           giode doctor || true
-          giode build -arch ${{ matrix.arch }} windows windows-installer msix
+          giode build -arch ${{ matrix.arch }} windows windows-installer
           CGO_ENABLED=0 GOARCH=${{ matrix.arch }} go build -trimpath -ldflags "-s -w -X main.version=$TAG" -o dist/windows/anyprobe.exe ./cmd/anyprobe
+      # Last, under the name reserved in Partner Center, which the
+      # package's display name must match.
+      - name: Build the Store package
+        run: |
+          # The resources the CLI compiled for AnyFile.exe would clash.
+          rm -f cmd/anyfile/*.syso
+          sed -i 's/^name = "AnyFile"$/name = "AnyFile File Inspector"/' giode.toml
+          grep '^name =' giode.toml
+          giode build -arch ${{ matrix.arch }} msix
       - name: Package
         run: |
           mkdir -p out pkg

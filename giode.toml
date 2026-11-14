@@ -50,14 +50,14 @@ arch = "amd64"
 per_machine = false
 desktop_shortcut = true
 
-# The Microsoft Store package (giode build msix). Replace these with the
-# values on Partner Center's Product identity page: Package/Identity/
-# Publisher, Package/Identity/Name and Package/Properties/
-# PublisherDisplayName. The Store signs the package.
+# The Microsoft Store package (giode build msix), with the values from
+# Partner Center's Product identity page. The Store signs the package.
+# Its display name must be the reserved "AnyFile File Inspector": the
+# release workflow sets app.name to that for the MSIX build only.
 [windows.msix]
-publisher = "CN=xmhrnx"
-identity_name = "xmhrnx.AnyFile"
-publisher_display_name = "xmhrnx"
+publisher = "CN=B40E8F57-A7E0-40BB-8E74-5D051D0B578B"
+identity_name = "MehranZahir.AnyFileFileInspector"
+publisher_display_name = "Mehran Zahiroddini"
 
 [linux]
 categories = ["Utility", "System"]
