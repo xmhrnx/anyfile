@@ -296,5 +296,7 @@
 	"Authenticode signature present": "มีลายเซ็น Authenticode",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "ผสม"
+	"Mixed": "ผสม",
+	"Open-source licenses": "สัญญาอนุญาตโอเพนซอร์ส",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile สร้างขึ้นจากโครงการโอเพนซอร์สเหล่านี้ เลือกโครงการเพื่ออ่านสัญญาอนุญาต"
 }

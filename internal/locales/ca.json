@@ -296,5 +296,7 @@
 	"Authenticode signature present": "Hi ha signatura Authenticode",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Mixt"
+	"Mixed": "Mixt",
+	"Open-source licenses": "Llicències de codi obert",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile està fet amb aquests projectes de codi obert. Seleccioneu-ne un per llegir-ne la llicència."
 }

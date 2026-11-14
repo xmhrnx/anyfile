@@ -33,6 +33,8 @@ type settingsPage struct {
 
 	reset, done, showFile, installAll *button.Button
 	menuAdd, menuRemove               *button.Button
+
+	licenses giode.Element
 }
 
 // numberField is a text input that only accepts whole numbers within
@@ -61,6 +63,7 @@ var tridModeLabels = []string{"If unsure", "Always", "Never"}
 func newSettingsPage(u *UI) *settingsPage {
 	sp := &settingsPage{u: u, numbers: map[string]*numberField{}, checks: map[string]*toggle.Switch{}, checkLabels: map[string]string{}, paths: map[string]*pathField{}}
 	sp.scroll = giode.Scroll(sp.content, giode.Styles{ScrollBar: giode.ScrollBar{ThumbColor: "#ffffff22", Width: 6, Radius: 3}})
+	sp.licenses = giode.LicensesView(licensesJSON, giode.Styles{Color: colText, FontSize: 13})
 	field := giode.Styles{Background: colSurface2, Color: colText, BorderColor: colBorderHi, BorderRadius: 8, Padding: giode.SymmetricInset(10, 7), FontSize: 13}
 
 	num := func(key, unit string, get func(settings.Settings) int, set func(*settings.Settings, int)) {
@@ -136,16 +139,14 @@ func newSettingsPage(u *UI) *settingsPage {
 			OnChange(func(text string) { sp.changePath(f, text, folder) })
 		appText.add(func() { f.in.Placeholder(tr(placeholder)) })
 		f.browse = newBtn("open", "Browse…", btnSecondary, func() {
+			set := func(p string) { f.in.SetText(p); sp.changePath(f, p, folder) }
+			if folder {
+				u.pickFolder(tr("Choose a folder"), set)
+				return
+			}
 			go func() {
-				var p string
-				var ok bool
-				if folder {
-					p, ok = platform.PickFolder(tr("Choose a folder"))
-				} else {
-					p, ok = platform.PickFile(tr("Choose the program"))
-				}
-				if ok {
-					u.app.Post(func() { f.in.SetText(p); sp.changePath(f, p, folder) })
+				if ps := pickPaths(u.app, false); len(ps) > 0 {
+					u.app.Post(func() { set(ps[0]) })
 				}
 			}()
 		})
@@ -290,15 +291,22 @@ func (sp *settingsPage) content() giode.Element {
 		sectionTitle("settings", "General"),
 		sp.row("Language", "The language of AnyFile's interface. File types and the engines' own reports stay in English.", sp.language, ""),
 	)
-	ident := card(giode.Styles{},
+	identRows := []giode.Element{
 		sectionTitle("scan", "Identification"),
 		sp.numberRow("head_kb", "Bytes read from each file", "The start of a file holds its signature. The disc-image check reads up to 36 KB in, so 40 KB is the minimum. Larger samples help tell text formats apart."),
 		sp.numberRow("entropy_sample_mb", "Entropy sample", "Data sampled across the file to estimate how random it is."),
-		sp.row("Ask Magika", "Google's deep-learning model: fast, and strong on text, code and files without a header. Also asked about generic plain text.", segmentedBox(sp.magikaMode), ""),
-		sp.row("Ask TrID", "TrID has 18,000+ definitions but is slower than the built-in engines.", segmentedBox(sp.tridMode), ""),
-		sp.numberRow("trid_trust_pct", "Skip Magika and TrID above", "Built-in confidence at which neither is asked."),
-		sp.numberRow("trid_timeout_sec", "TrID time limit", "Give up on TrID after this long."),
-	)
+	}
+	// The Mac App Store build has no external engines to set up.
+	external := !platform.Sandboxed()
+	if external {
+		identRows = append(identRows,
+			sp.row("Ask Magika", "Google's deep-learning model: fast, and strong on text, code and files without a header. Also asked about generic plain text.", segmentedBox(sp.magikaMode), ""),
+			sp.row("Ask TrID", "TrID has 18,000+ definitions but is slower than the built-in engines.", segmentedBox(sp.tridMode), ""),
+			sp.numberRow("trid_trust_pct", "Skip Magika and TrID above", "Built-in confidence at which neither is asked."),
+			sp.numberRow("trid_timeout_sec", "TrID time limit", "Give up on TrID after this long."),
+		)
+	}
+	ident := card(giode.Styles{}, identRows...)
 	explore := card(giode.Styles{},
 		sectionTitle("layers", "Exploring"),
 		sp.numberRow("prefetch_count", "Identify in the background", "Members of a container identified right after it opens, so the tree shows their real types."),
@@ -335,8 +343,18 @@ func (sp *settingsPage) content() giode.Element {
 		sp.engineRow("ffmpeg", "FFmpeg", "Lists media streams (ffprobe) and copies them out without re-encoding (ffmpeg).", "ffmpeg_path", "ffprobe_path"),
 		sp.pathRow("oodle_path", "Oodle", "oo2core_*_win64.dll, shipped with many games. It is proprietary, so AnyFile can't install it; it also looks in the opened file's folder."),
 	)
+	cards := []giode.Element{header, general, ident, explore, files}
+	if external {
+		cards = append(cards, tools)
+	}
+	cards = append(cards, card(giode.Styles{},
+		sectionTitle("info", "Open-source licenses"),
+		giode.Text(tr("AnyFile is built from these open-source projects. Select one to read its license."), txtw(12.5, colMuted, giode.Styles{LineHeight: 18})),
+		// The list scrolls on its own, inside the page.
+		giode.Box(giode.Styles{Width: -1, Height: 300, BorderRadius: 8, BorderWidth: 1, BorderColor: colBorder}, sp.licenses),
+	))
 	return giode.Box(giode.Styles{Width: -1, Justify: giode.JustifyCenter, Padding: giode.Inset{Top: 22, Right: 26, Bottom: 30, Left: 26}},
-		giode.Stack(giode.Styles{Width: -1, MaxWidth: 860, Gap: 16}, header, general, ident, explore, files, tools))
+		giode.Stack(giode.Styles{Width: -1, MaxWidth: 860, Gap: 16}, cards...))
 }
 
 // row lays out a label and help text on the left and a control on the
@@ -388,10 +406,11 @@ func (sp *settingsPage) pathRow(key, label, help string) giode.Element {
 // install. macOS takes the entry from the app bundle, so it has none.
 func (sp *settingsPage) contextMenuRow() giode.Element {
 	help := "Adds it to Explorer's menu for your account (under \"Show more options\" on Windows 11). The setup program adds it for you."
-	switch runtime.GOOS {
-	case "darwin":
+	switch {
+	case runtime.GOOS == "darwin", platform.Packaged():
+		// The app bundle, or the Microsoft Store's package, has it.
 		return nil
-	case "linux":
+	case runtime.GOOS == "linux":
 		help = "Adds it to GNOME Files and Caja (under Scripts), Dolphin and Nemo for your account."
 	}
 	return sp.row("\"Inspect with AnyFile\" in the right-click menu", help,

@@ -296,5 +296,7 @@
 	"Authenticode signature present": "Tanda tangan Authenticode ada",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Campuran"
+	"Mixed": "Campuran",
+	"Open-source licenses": "Lisensi sumber terbuka",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile dibangun dari proyek sumber terbuka ini. Pilih salah satu untuk membaca lisensinya."
 }

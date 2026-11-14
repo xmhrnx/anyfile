@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/xmhrnx/anyfile/internal/install"
+	"github.com/xmhrnx/anyfile/internal/platform"
 	"github.com/xmhrnx/anyfile/internal/tools"
 	"github.com/xmhrnx/giode"
 	"github.com/xmhrnx/giode/components/button"
@@ -71,9 +72,10 @@ func (ei *engineInstall) found() bool {
 	return true
 }
 
-// canInstall reports whether an Install button makes sense here.
+// canInstall reports whether an Install button makes sense here: never
+// in the Mac App Store build, which mustn't download programs.
 func (ei *engineInstall) canInstall() bool {
-	return !ei.busy && ei.e.Unsupported() == ""
+	return !ei.busy && ei.e.Unsupported() == "" && !platform.Sandboxed()
 }
 
 // startInstall downloads and installs an engine in the background,

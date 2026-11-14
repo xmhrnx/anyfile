@@ -1,36 +1,31 @@
 // Package platform hands files to the operating system: opening them
-// in the user's own viewers (AnyFile never renders content itself),
-// revealing them in the file manager and native file dialogs.
+// in the user's own viewers (AnyFile never renders content itself) and
+// revealing them in the file manager. It also tells how AnyFile was
+// installed, since the stores' packages limit what it may do.
 package platform
 
 import (
 	"os"
 	"runtime"
-
-	"github.com/ncruces/zenity"
 )
 
-// PickFile shows the native "open file" dialog. ok is false when the
-// user cancelled.
-func PickFile(title string) (string, bool) {
-	p, err := zenity.SelectFile(zenity.Title(title))
-	return p, err == nil && p != ""
-}
-
-// PickFolder shows the native folder picker.
-func PickFolder(title string) (string, bool) {
-	p, err := zenity.SelectFile(zenity.Title(title), zenity.Directory())
-	return p, err == nil && p != ""
-}
-
 // FileDropSupported reports whether files can be dropped on the window
-// here (giode implements drops on Windows only for now).
-func FileDropSupported() bool { return runtime.GOOS == "windows" }
+// here. giode takes drops on Windows and macOS, and on Linux when the
+// giode CLI builds the app.
+func FileDropSupported() bool {
+	switch runtime.GOOS {
+	case "windows", "darwin", "linux":
+		return true
+	}
+	return false
+}
 
-// PickFiles shows the native "open file" dialog allowing several files.
-func PickFiles(title string) ([]string, bool) {
-	ps, err := zenity.SelectFileMultiple(zenity.Title(title))
-	return ps, err == nil && len(ps) > 0
+// Sandboxed reports whether AnyFile runs in the macOS App Sandbox, as
+// Mac App Store builds do. The sandbox only lets it reach the files the
+// user hands it, and the store forbids downloading programs, so the
+// external engines are off there.
+func Sandboxed() bool {
+	return runtime.GOOS == "darwin" && os.Getenv("APP_SANDBOX_CONTAINER_ID") != ""
 }
 
 // IsFile reports whether p is an existing regular file.

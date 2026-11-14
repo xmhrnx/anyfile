@@ -6,6 +6,7 @@
 package ui
 
 import (
+	"context"
 	"image"
 	"log"
 	"strings"
@@ -147,11 +148,13 @@ func (u *UI) toast(kind, msg string) {
 	u.toasts.Show(k, msg)
 }
 
-// pickFile shows the native dialog, which blocks, off the UI goroutine.
-// Every chosen file opens in its own tab.
+// pickFile shows the system's file picker, which blocks, off the UI
+// goroutine. Every chosen file opens in its own tab. giode's pickers,
+// unlike a helper process, give a sandboxed (Mac App Store) build
+// access to what the user chose.
 func (u *UI) pickFile() {
 	go func() {
-		if paths, ok := platform.PickFiles(tr("Open files")); ok {
+		if paths := pickPaths(u.app, true); len(paths) > 0 {
 			u.app.Post(func() { u.openPaths(paths) })
 		}
 	}()
@@ -160,10 +163,27 @@ func (u *UI) pickFile() {
 // pickFolder asks for a folder, then runs fn with it on the UI goroutine.
 func (u *UI) pickFolder(title string, fn func(dir string)) {
 	go func() {
-		if dir, ok := platform.PickFolder(title); ok {
+		if dir, err := u.app.PickFolder(context.Background(), giode.FolderOptions{Title: title}); err == nil && dir != "" {
 			u.app.Post(func() { fn(dir) })
 		}
 	}()
+}
+
+// pickPaths shows the file picker and returns the paths chosen, none
+// when the user cancelled; call it off the UI goroutine.
+func pickPaths(app *giode.App, multiple bool) []string {
+	files, err := app.PickFiles(context.Background(), giode.PickOptions{Multiple: multiple})
+	if err != nil {
+		return nil
+	}
+	var paths []string
+	for _, f := range files {
+		f.Close()
+		if f.Path != "" {
+			paths = append(paths, f.Path)
+		}
+	}
+	return paths
 }
 
 func (u *UI) view() giode.Element {
@@ -252,18 +272,20 @@ func (u *UI) statusBar(root *session.Node) giode.Element {
 			icon(ic, c, 11), giode.Text(name, txt(11.5, c)))
 	}
 	engines := []giode.Element{giode.Text(tr("Engines"), txt(11.5, colFaint))}
-	for _, t := range tools.All() {
-		engines = append(engines, status(t.Name, t.Found()))
+	// The Mac App Store build has only the built-in engines.
+	if !platform.Sandboxed() {
+		for _, t := range tools.All() {
+			engines = append(engines, status(t.Name, t.Found()))
+		}
+		// Oodle comes with games, so whether it's available depends on
+		// where the opened file lives.
+		near := ""
+		if root != nil {
+			near = root.Local
+		}
+		engines = append(engines, status("Oodle", oodle.Find(near) != ""))
 	}
-	// Oodle comes with games, so whether it's available depends on
-	// where the opened file lives.
-	near := ""
-	if root != nil {
-		near = root.Local
-	}
-	engines = append(engines,
-		status("Oodle", oodle.Find(near) != ""),
-		status(tr("Built-in (signatures, carver, {count} engines)", "count", explore.EngineCount()), true))
+	engines = append(engines, status(tr("Built-in (signatures, carver, {count} engines)", "count", explore.EngineCount()), true))
 	right := giode.Text("AnyFile "+u.version+" · "+tr("Drop a file anywhere in the window"), txt(11.5, colFaint))
 	if !platform.FileDropSupported() {
 		right = giode.Text("AnyFile "+u.version+" · "+tr("Use Open file to inspect a file"), txt(11.5, colFaint))

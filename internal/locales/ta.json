@@ -296,5 +296,7 @@
 	"Authenticode signature present": "Authenticode கையொப்பம் உள்ளது",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "கலவை"
+	"Mixed": "கலவை",
+	"Open-source licenses": "திறந்த மூல உரிமங்கள்",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile இந்தத் திறந்த மூலத் திட்டங்களால் உருவாக்கப்பட்டது. ஒன்றின் உரிமத்தைப் படிக்க அதைத் தேர்ந்தெடுக்கவும்."
 }

@@ -296,5 +296,7 @@
 	"Authenticode signature present": "Sahihi ya Authenticode ipo",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Mchanganyiko"
+	"Mixed": "Mchanganyiko",
+	"Open-source licenses": "Leseni za programu huria",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile imejengwa kutokana na miradi hii ya programu huria. Chagua mmoja kusoma leseni yake."
 }

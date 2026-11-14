@@ -296,5 +296,7 @@
 	"Authenticode signature present": "امضای Authenticode موجود است",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "مختلط"
+	"Mixed": "مختلط",
+	"Open-source licenses": "مجوزهای متن‌باز",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile با این پروژه‌های متن‌باز ساخته شده است. یکی را انتخاب کنید تا مجوز آن را بخوانید."
 }

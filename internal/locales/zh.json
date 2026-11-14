@@ -296,5 +296,7 @@
 	"Authenticode signature present": "存在 Authenticode 签名",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "混合"
+	"Mixed": "混合",
+	"Open-source licenses": "开源许可证",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile 基于以下开源项目构建。选择一个即可阅读其许可证。"
 }

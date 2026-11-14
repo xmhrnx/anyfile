@@ -296,5 +296,7 @@
 	"Authenticode signature present": "Առկա է Authenticode ստորագրություն",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Խառը"
+	"Mixed": "Խառը",
+	"Open-source licenses": "Բաց կոդի լիցենզիաներ",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile-ը կառուցված է այս բաց կոդով նախագծերից։ Ընտրեք մեկը՝ դրա լիցենզիան կարդալու համար։"
 }

@@ -13,6 +13,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/xmhrnx/anyfile/internal/platform"
 	"github.com/xmhrnx/anyfile/internal/settings"
 )
 
@@ -76,6 +77,12 @@ func load() {
 	}
 	loaded = true
 	cfg := settings.Get()
+	find := find
+	if platform.Sandboxed() {
+		// The Mac App Store build: the sandbox can't run the user's
+		// programs, and the store allows no downloaded ones.
+		find = func(string, string, string, []string, []string) string { return "" }
+	}
 	func() {
 		trid = Tool{Name: "TrID", Path: find(cfg.TrIDPath, "ANYFILE_TRID", "trid", []string{"trid"}, tridDirs())}
 		// TrID is useless without its definitions database.

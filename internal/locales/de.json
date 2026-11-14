@@ -314,5 +314,7 @@
 	"Authenticode signature present": "Authenticode-Signatur vorhanden",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Gemischt"
+	"Mixed": "Gemischt",
+	"Open-source licenses": "Open-Source-Lizenzen",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile basiert auf diesen Open-Source-Projekten. Wählen Sie eines aus, um seine Lizenz zu lesen."
 }

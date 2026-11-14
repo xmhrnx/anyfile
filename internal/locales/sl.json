@@ -326,5 +326,7 @@
 	"Authenticode signature present": "Podpis Authenticode je prisoten",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Mešani"
+	"Mixed": "Mešani",
+	"Open-source licenses": "Odprtokodne licence",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile je zgrajen iz teh odprtokodnih projektov. Izberite enega, da preberete njegovo licenco."
 }

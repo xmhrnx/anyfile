@@ -296,5 +296,7 @@
 	"Authenticode signature present": "Authenticode স্বাক্ষর আছে",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "মিশ্র"
+	"Mixed": "মিশ্র",
+	"Open-source licenses": "ওপেন-সোর্স লাইসেন্স",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile এই ওপেন-সোর্স প্রকল্পগুলো দিয়ে তৈরি। কোনোটির লাইসেন্স পড়তে সেটি নির্বাচন করুন।"
 }

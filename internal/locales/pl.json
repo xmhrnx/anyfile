@@ -326,5 +326,7 @@
 	"Authenticode signature present": "Obecny podpis Authenticode",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Mieszane"
+	"Mixed": "Mieszane",
+	"Open-source licenses": "Licencje open source",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile powstał z tych projektów open source. Wybierz jeden, aby przeczytać jego licencję."
 }

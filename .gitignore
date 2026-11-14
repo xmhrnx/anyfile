@@ -3,3 +3,7 @@
 *.syso
 .idea/
 /dist/
+# Store signing material; the release workflow takes it from secrets.
+*.provisionprofile
+*.p12
+*.pfx

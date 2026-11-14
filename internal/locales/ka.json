@@ -296,5 +296,7 @@
 	"Authenticode signature present": "Authenticode ხელმოწერა არსებობს",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "შერეული"
+	"Mixed": "შერეული",
+	"Open-source licenses": "ღია კოდის ლიცენზიები",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile აგებულია ამ ღია კოდის პროექტებით. აირჩიეთ ერთ-ერთი მისი ლიცენზიის წასაკითხად."
 }

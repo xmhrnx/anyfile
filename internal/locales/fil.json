@@ -296,5 +296,7 @@
 	"Authenticode signature present": "May Authenticode signature",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Halo-halo"
+	"Mixed": "Halo-halo",
+	"Open-source licenses": "Mga open-source na lisensya",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "Binuo ang AnyFile mula sa mga open-source na proyektong ito. Pumili ng isa para basahin ang lisensya nito."
 }

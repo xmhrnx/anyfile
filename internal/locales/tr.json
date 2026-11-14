@@ -296,5 +296,7 @@
 	"Authenticode signature present": "Authenticode imzası var",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Karışık"
+	"Mixed": "Karışık",
+	"Open-source licenses": "Açık kaynak lisansları",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile bu açık kaynak projelerinden oluşturulmuştur. Lisansını okumak için birini seçin."
 }

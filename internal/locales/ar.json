@@ -296,5 +296,7 @@
 	"Authenticode signature present": "توجد بصمة Authenticode",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "مختلط"
+	"Mixed": "مختلط",
+	"Open-source licenses": "تراخيص المصادر المفتوحة",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "بُني AnyFile من مشاريع المصادر المفتوحة هذه. اختر مشروعًا لقراءة ترخيصه."
 }

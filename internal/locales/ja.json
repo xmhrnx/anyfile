@@ -296,5 +296,7 @@
 	"Authenticode signature present": "Authenticode 署名あり",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "混在"
+	"Mixed": "混在",
+	"Open-source licenses": "オープンソース ライセンス",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile は以下のオープンソース プロジェクトで構成されています。ライセンスを読むには項目を選択してください。"
 }

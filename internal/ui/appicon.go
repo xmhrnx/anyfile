@@ -15,6 +15,12 @@ import (
 //go:embed assets/icon.png
 var iconPNG []byte
 
+// licensesJSON lists the licenses of the modules AnyFile is built
+// from. `giode licenses` writes it; Settings shows it.
+//
+//go:embed licenses.json
+var licensesJSON []byte
+
 // iconImage is iconPNG decoded once, for the title bar.
 var iconImage = func() image.Image {
 	img, err := png.Decode(bytes.NewReader(iconPNG))

@@ -81,7 +81,9 @@ func (in *inspector) content() giode.Element {
 		if d := in.details(n); d != nil {
 			sections = append(sections, d)
 		}
-		sections = append(sections, in.magikaCard(n), in.tridCard(n))
+		if !platform.Sandboxed() {
+			sections = append(sections, in.magikaCard(n), in.tridCard(n))
+		}
 		if h := in.hashes(n); h != nil {
 			sections = append(sections, h)
 		}

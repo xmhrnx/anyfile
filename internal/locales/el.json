@@ -314,5 +314,7 @@
 	"Authenticode signature present": "Υπάρχει υπογραφή Authenticode",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Μικτά"
+	"Mixed": "Μικτά",
+	"Open-source licenses": "Άδειες ανοιχτού κώδικα",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "Το AnyFile βασίζεται σε αυτά τα έργα ανοιχτού κώδικα. Επιλέξτε ένα για να διαβάσετε την άδειά του."
 }

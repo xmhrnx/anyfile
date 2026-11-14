@@ -320,5 +320,7 @@
 	"Authenticode signature present": "Authenticode paraksts ir",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Jaukts"
+	"Mixed": "Jaukts",
+	"Open-source licenses": "Atvērtā pirmkoda licences",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile ir veidots no šiem atvērtā pirmkoda projektiem. Izvēlieties vienu, lai izlasītu tā licenci."
 }

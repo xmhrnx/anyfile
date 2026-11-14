@@ -296,5 +296,7 @@
 	"Authenticode signature present": "Có chữ ký Authenticode",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Hỗn hợp"
+	"Mixed": "Hỗn hợp",
+	"Open-source licenses": "Giấy phép nguồn mở",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile được xây dựng từ các dự án nguồn mở này. Chọn một dự án để đọc giấy phép của nó."
 }

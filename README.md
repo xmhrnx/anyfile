@@ -91,3 +91,7 @@ The engine installers have a test that downloads every engine, for this computer
 ```bash
 ANYFILE_NET_TEST=1 go test -run 'Live|Other' -timeout 30m ./internal/install
 ```
+
+## Store versions
+
+AnyFile is also coming to the Microsoft Store and the Mac App Store. The Microsoft Store version works like the download. The Mac App Store version has only the built-in engines, because Apple doesn't let it install or run Magika, TrID or other external tools; get the download if you need them.

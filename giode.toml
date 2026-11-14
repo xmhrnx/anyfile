@@ -15,9 +15,33 @@ publisher = "xmhrnx"
 description = "Find out what any file really is, explore what's inside, and open each part in your own apps."
 website = "https://github.com/xmhrnx/anyfile"
 ldflags = "-s -w -X main.version=dev"
+# The open-source licenses Settings lists; every build refreshes it.
+licenses = "internal/ui/licenses.json"
 
 [macos]
 min_os = 11
+
+[macos.plist]
+LSApplicationCategoryType = "public.app-category.utilities"
+# AnyFile uses no encryption beyond what macOS provides, so App Store
+# Connect doesn't ask about export compliance for each upload.
+ITSAppUsesNonExemptEncryption = false
+
+# The Mac App Store build (giode build mas). The release workflow writes
+# the profile from the MACOS_PROFILE_BASE64 secret and points
+# $GIODE_MACOS_STORE_PROFILE at it; keep the file out of git.
+# In the sandbox AnyFile has only its built-in engines: the App Store
+# allows no downloaded programs, and the sandbox can't run the user's.
+[macos.store]
+profile = "store.provisionprofile"
+entitlements = [
+  "network.client", # giode's single-instance lock is a local socket
+  "network.server",
+  "files.user-selected.read-write", # opened files, and folders to extract to
+]
+
+[privacy]
+tracking = false
 
 [windows]
 arch = "amd64"
@@ -26,13 +50,22 @@ arch = "amd64"
 per_machine = false
 desktop_shortcut = true
 
+# The Microsoft Store package (giode build msix). Replace these with the
+# values on Partner Center's Product identity page: Package/Identity/
+# Publisher, Package/Identity/Name and Package/Properties/
+# PublisherDisplayName. The Store signs the package.
+[windows.msix]
+publisher = "CN=xmhrnx"
+identity_name = "xmhrnx.AnyFile"
+publisher_display_name = "xmhrnx"
+
 [linux]
 categories = ["Utility", "System"]
 maintainer = "xmhrnx <61628815+xmhrnx@users.noreply.github.com>"
 
 # "Inspect with AnyFile" in the file manager's right-click menu, on every file.
-# The Windows installer and the macOS app register it; Settings can add it
-# for the current user otherwise.
+# The Windows installer, the MSIX package and the macOS app register it;
+# Settings can add it for the current user otherwise.
 [[context_actions]]
 id = "inspect"
 label = "Inspect with AnyFile"

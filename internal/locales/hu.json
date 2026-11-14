@@ -314,5 +314,7 @@
 	"Authenticode signature present": "Authenticode-aláírás található",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Vegyes"
+	"Mixed": "Vegyes",
+	"Open-source licenses": "Nyílt forráskódú licencek",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "Az AnyFile ezekre a nyílt forráskódú projektekre épül. Válasszon egyet a licence elolvasásához."
 }

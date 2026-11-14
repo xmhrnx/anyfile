@@ -320,5 +320,7 @@
 	"Authenticode signature present": "Yra Authenticode parašas",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Mišrios"
+	"Mixed": "Mišrios",
+	"Open-source licenses": "Atvirojo kodo licencijos",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile sukurta naudojant šiuos atvirojo kodo projektus. Pasirinkite vieną, kad perskaitytumėte jo licenciją."
 }

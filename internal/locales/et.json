@@ -314,5 +314,7 @@
 	"Authenticode signature present": "Authenticode-allkiri on olemas",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Segatud"
+	"Mixed": "Segatud",
+	"Open-source licenses": "Avatud lähtekoodi litsentsid",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile on ehitatud nendest avatud lähtekoodiga projektidest. Valige üks, et lugeda selle litsentsi."
 }

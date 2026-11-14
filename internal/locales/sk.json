@@ -320,5 +320,7 @@
 	"Authenticode signature present": "Podpis Authenticode je prítomný",
 	"CRLF (Windows)": "CRLF (Windows)",
 	"LF (Unix)": "LF (Unix)",
-	"Mixed": "Zmiešané"
+	"Mixed": "Zmiešané",
+	"Open-source licenses": "Licencie open source",
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile je postavený z týchto open source projektov. Vyberte jeden a prečítajte si jeho licenciu."
 }
