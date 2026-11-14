@@ -6,7 +6,7 @@ require (
 	gioui.org v0.10.2
 	github.com/klauspost/compress v1.20.3
 	github.com/ulikunitz/xz v0.5.17
-	github.com/xmhrnx/giode v1.0.23-alpha.1
+	github.com/xmhrnx/giode v1.0.24-alpha.1
 	golang.org/x/sys v0.47.0
 )
 

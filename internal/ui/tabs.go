@@ -1,23 +1,72 @@
 package ui
 
 import (
+	"image"
 	"path/filepath"
 	"strings"
 
+	"gioui.org/layout"
+
 	"github.com/xmhrnx/anyfile/internal/session"
 	"github.com/xmhrnx/giode"
+	"github.com/xmhrnx/giode/elements"
 )
 
 // tab is one opened file: its own session (with its temp folder) and
 // its own tree, so expansion, selection and filters stay per file.
 type tab struct {
-	sess  *session.Session
-	tree  *treeView
-	btn   *giode.PressableElement
-	close *giode.PressableElement
+	id   string // the file's path, its ID in the tab strip
+	sess *session.Session
+	tree *treeView
 }
 
-const maxTabWidth = 190 // dp; a fixed width so names grow and ellipsize inside it
+// dragRoom is the empty title bar kept free of tabs, to move the
+// window by.
+const dragRoom = 96 // dp
+
+const (
+	tabFontSize    = 12.5
+	tabMin, tabMax = 96, 200 // dp
+	tabHeight      = 43      // the title bar, less its border
+)
+
+// newTabStrip makes the title bar's tabs. giode's DocTabs shrinks them
+// when they don't fit, then scrolls, reorders them by dragging and
+// shows each file's path as a tooltip. Its right-click menu is off: its
+// items (Close Others, ...) are in English only.
+func (u *UI) newTabStrip() {
+	u.strip = giode.DocTabs(giode.Styles{
+		Background: colSidebar, Color: colText, BorderColor: colBorder, FontSize: tabFontSize, Height: tabHeight,
+	}).TabWidth(tabMin, tabMax).NoTabMenu().
+		OnSelect(func(id string) {
+			if t := u.tabByID(id); t != nil {
+				u.activate(t)
+			}
+		}).
+		OnClose(func(id string) {
+			if t := u.tabByID(id); t != nil {
+				u.closeTab(t)
+			}
+		}).
+		OnReorder(func(ids []string) {
+			order := make([]*tab, 0, len(ids))
+			for _, id := range ids {
+				if t := u.tabByID(id); t != nil {
+					order = append(order, t)
+				}
+			}
+			u.tabs = order
+		})
+}
+
+func (u *UI) tabByID(id string) *tab {
+	for _, t := range u.tabs {
+		if t.id == id {
+			return t
+		}
+	}
+	return nil
+}
 
 // openPaths opens each path in a tab of its own, or switches to the tab
 // already showing it.
@@ -42,34 +91,19 @@ func (u *UI) openPath(p string) {
 	t.tree = newTreeView(u, t.sess)
 	t.sess.OnExpand(t.tree.expand)
 	t.sess.Open(p)
-	if t.sess.Root() == nil {
+	root := t.sess.Root()
+	if root == nil {
 		return // Open reported why
 	}
-	t.btn = giode.Pressable(func(s giode.PressState) giode.Element { return u.tabView(t, s) }).
-		Label("tab: " + t.sess.Root().Name).
-		OnClick(func(e giode.ClickEvent) {
-			if e.Button == giode.MouseMiddle {
-				u.closeTab(t)
-				return
-			}
-			u.activate(t)
-		})
-	t.close = giode.Pressable(func(s giode.PressState) giode.Element {
-		c := colMuted
-		var bg string
-		if s.Hovered {
-			c, bg = colText, "#ffffff1a"
-		}
-		return giode.Box(giode.Styles{Width: 20, Height: 20, Align: giode.AlignCenter, Justify: giode.JustifyCenter,
-			BorderRadius: 5, Background: color(bg)}, icon("x", c, 12))
-	}).Label("close: " + t.sess.Root().Name).
-		OnClick(func(giode.ClickEvent) { u.closeTab(t) })
+	t.id = root.Local
 	u.tabs = append(u.tabs, t)
+	u.strip.Add(giode.DocTab{ID: t.id, Title: root.Name, Tooltip: root.Local})
 	u.activate(t)
 }
 
 func (u *UI) activate(t *tab) {
 	u.showSettings = false
+	u.strip.Select(t.id)
 	if u.active != t {
 		u.active = t
 		u.inspector.scroll.ScrollTo(0)
@@ -90,50 +124,38 @@ func (u *UI) closeTab(t *tab) {
 	u.tabs = append(u.tabs[:i], u.tabs[i+1:]...)
 	if u.active == t {
 		u.active = nil
-		if len(u.tabs) > 0 {
-			u.activate(u.tabs[min(i, len(u.tabs)-1)])
-		}
 	}
+	// Removing the selected tab selects a neighbour through OnSelect.
+	u.strip.Remove(t.id)
 }
 
-// tabStrip lays the tabs out in the title bar.
-func (u *UI) tabStrip() giode.Element {
-	if len(u.tabs) == 0 {
-		return giode.Box(giode.Styles{})
+// tabStrip lays the tabs out in the title bar: as wide as they are, up
+// to the room left after the Settings button, keeping dragRoom free to
+// move the window by.
+func (u *UI) tabStrip(gtx layout.Context) layout.Dimensions {
+	tabs := u.strip.Tabs()
+	if len(tabs) == 0 {
+		return layout.Dimensions{}
 	}
-	items := make([]giode.Element, 0, len(u.tabs))
-	for _, t := range u.tabs {
-		items = append(items, t.btn)
+	room := gtx.Constraints.Max.X - gtx.Dp(dragRoom) - elements.Measure(gtx, u.settingsBtn).Size.X
+	// Each tab's natural width, as DocTabs works it out: the title,
+	// 12 dp before it, then a 4 dp gap, the 20 dp close button and
+	// 6 dp, within TabWidth. (Measuring the strip itself would reset
+	// its scrolling.)
+	mg := gtx
+	mg.Constraints = layout.Constraints{Max: image.Pt(1<<20, gtx.Constraints.Max.Y)}
+	natural := 0
+	for _, t := range tabs {
+		w := elements.Measure(mg, giode.Text(t.Title, giode.Styles{FontSize: tabFontSize, MaxLines: 1})).Size.X
+		natural += min(max(w+gtx.Dp(12+4+20+6), gtx.Dp(tabMin)), gtx.Dp(tabMax))
 	}
-	return giode.Row(giode.Styles{Gap: 4, Align: giode.AlignCenter, Wrap: giode.WrapNoWrap, Padding: giode.Inset{Left: 4}}, items...)
-}
-
-func (u *UI) tabView(t *tab, s giode.PressState) giode.Element {
-	root := t.sess.Root()
-	if root == nil {
-		return giode.Box(giode.Styles{})
+	w := max(min(natural, room), 0)
+	if !gtx.Source.Enabled() {
+		// A measuring pass (input is off), as when the title bar sizes
+		// its parts: laying the strip out here would use up its request
+		// to scroll the selected tab into view.
+		return layout.Dimensions{Size: image.Pt(w, gtx.Dp(tabHeight))}
 	}
-	active := t == u.active
-	bg, fg, border := "", colMuted, "#00000000"
-	switch {
-	case active:
-		bg, fg, border = colRaised, colText, colBorderHi
-	case s.Hovered:
-		bg, fg = "#ffffff0d", colTextSoft
-	}
-	cat := root.Category()
-	lead := icon(catIcon(cat), catColor(cat), 14)
-	if root.Busy != "" {
-		lead = giode.Spinner(giode.Styles{Width: 13, Height: 13, Color: colAccent})
-	}
-	return giode.Row(giode.Styles{
-		Gap: 7, Align: giode.AlignCenter, Wrap: giode.WrapNoWrap, Width: maxTabWidth, Height: 30,
-		Padding: giode.Inset{Left: 10, Right: 5}, Background: color(bg), BorderRadius: 8,
-		BorderWidth: 1, BorderColor: color(border),
-	},
-		lead,
-		giode.Box(giode.Styles{FlexGrow: 1, Width: -1},
-			giode.Text(root.Name, txtw(12.5, fg, giode.Styles{MaxLines: 1, TextOverflow: giode.TextOverflowEllipsis}))),
-		t.close,
-	)
+	gtx.Constraints.Min.X, gtx.Constraints.Max.X = w, w
+	return u.strip.Layout(gtx)
 }

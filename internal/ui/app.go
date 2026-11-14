@@ -33,6 +33,7 @@ type UI struct {
 
 	tabs      []*tab
 	active    *tab
+	strip     *giode.DocTabsElement
 	inspector *inspector
 
 	openBtn      *button.Button
@@ -96,6 +97,7 @@ func Run(args []string, version string) error {
 	u.engines = newEngineInstalls(u)
 	u.inspector = newInspector(u)
 	u.settings = newSettingsPage(u)
+	u.newTabStrip()
 	if settingsErr != nil {
 		u.toast("error", tr("Could not read settings, using defaults: {err}", "err", settingsErr))
 	}
@@ -110,7 +112,7 @@ func Run(args []string, version string) error {
 	u.bar = giode.TitleBar(u.app, "AnyFile", giode.Styles{
 		Background: colSidebar, Color: colTextSoft, Height: 44, FontSize: 13,
 		BorderWidth: 1, BorderColor: colBorder,
-	}).Icon(logo(22)).Leading(u.openBtn, dynamic(u.tabStrip)).Trailing(u.settingsBtn)
+	}).Icon(logo(22)).Leading(u.openBtn, rawEl(u.tabStrip)).Trailing(u.settingsBtn)
 	// giode runs a context action itself (OnContextAction).
 	if paths := fileArgs(args); len(paths) > 0 {
 		u.app.Post(func() { u.openPaths(paths) })
@@ -188,6 +190,15 @@ func pickPaths(app *giode.App, multiple bool) []string {
 
 func (u *UI) view() giode.Element {
 	appText.update()
+	giode.Shortcuts(
+		giode.Shortcut("Ctrl+Tab", func() { u.strip.SelectNext(1) }),
+		giode.Shortcut("Ctrl+Shift+Tab", func() { u.strip.SelectNext(-1) }),
+		giode.Shortcut("Mod+W", func() {
+			if u.active != nil && !u.showSettings {
+				u.closeTab(u.active)
+			}
+		}),
+	)
 	var body giode.Element
 	var root *session.Node
 	if t := u.active; u.showSettings {
@@ -302,8 +313,7 @@ func (u *UI) statusBar(root *session.Node) giode.Element {
 	)
 }
 
-// dynamic is an element rebuilt every frame, for places that take an
-// element once (the title bar's leading area holds the tab strip).
-type dynamic func() giode.Element
+// rawEl is an element that lays itself out.
+type rawEl func(gtx layout.Context) layout.Dimensions
 
-func (d dynamic) Layout(gtx layout.Context) layout.Dimensions { return d().Layout(gtx) }
+func (r rawEl) Layout(gtx layout.Context) layout.Dimensions { return r(gtx) }
