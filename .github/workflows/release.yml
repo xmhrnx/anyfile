@@ -65,6 +65,11 @@ jobs:
         run: go install "$GIODE_CLI" && echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       - name: Stamp the version
         run: .github/scripts/stamp-version.sh
+      # The runner images no longer include NSIS, which the installer needs.
+      - name: Install NSIS
+        run: |
+          choco install nsis -y --no-progress
+          echo "C:/Program Files (x86)/NSIS" >> "$GITHUB_PATH"
       - name: Build app and installer
         run: |
           giode doctor || true
@@ -184,8 +189,9 @@ jobs:
         run: |
           giode build macos
           # anyprobe as one universal binary next to the app's executable.
+          # With cgo: giode's i18n has no macOS locale lookup without it.
           for a in arm64 amd64; do
-            CGO_ENABLED=0 GOARCH=$a go build -trimpath -ldflags "-s -w -X main.version=$TAG" -o "dist/anyprobe-$a" ./cmd/anyprobe
+            CGO_ENABLED=1 GOARCH=$a go build -trimpath -ldflags "-s -w -X main.version=$TAG" -o "dist/anyprobe-$a" ./cmd/anyprobe
           done
           lipo -create -output dist/macos/AnyFile.app/Contents/MacOS/anyprobe dist/anyprobe-arm64 dist/anyprobe-amd64
           lipo -info dist/macos/AnyFile.app/Contents/MacOS/*
