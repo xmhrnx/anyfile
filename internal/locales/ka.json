@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "შერეული",
 	"Open-source licenses": "ღია კოდის ლიცენზიები",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile აგებულია ამ ღია კოდის პროექტებით. აირჩიეთ ერთ-ერთი მისი ლიცენზიის წასაკითხად."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile აგებულია ამ ღია კოდის პროექტებით. აირჩიეთ ერთ-ერთი მისი ლიცენზიის წასაკითხად.",
+	"Support AnyFile": "მხარი დაუჭირეთ AnyFile-ს",
+	"Donate": "შემოწირულობა",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile უფასოა, რეკლამისა და თვალთვალის გარეშე. თუ გეხმარებათ, შემოწირულობა მის გაგრძელებას უწყობს ხელს.",
+	"Donate on Ko-fi": "შემოწირულობა Ko-fi-ზე",
+	"Could not open {url}: {err}": "{url}-ის გახსნა ვერ მოხერხდა: {err}"
 }

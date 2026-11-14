@@ -316,5 +316,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Blandade",
 	"Open-source licenses": "Licenser för öppen källkod",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile är byggt av dessa projekt med öppen källkod. Välj ett för att läsa dess licens."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile är byggt av dessa projekt med öppen källkod. Välj ett för att läsa dess licens.",
+	"Support AnyFile": "Stöd AnyFile",
+	"Donate": "Donera",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile är gratis, utan reklam eller spårning. Om det hjälper dig håller en donation det igång.",
+	"Donate on Ko-fi": "Donera på Ko-fi",
+	"Could not open {url}: {err}": "Det gick inte att öppna {url}: {err}"
 }

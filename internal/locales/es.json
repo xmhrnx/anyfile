@@ -316,5 +316,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Mixtos",
 	"Open-source licenses": "Licencias de código abierto",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile se basa en estos proyectos de código abierto. Seleccione uno para leer su licencia."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile se basa en estos proyectos de código abierto. Seleccione uno para leer su licencia.",
+	"Support AnyFile": "Apoye AnyFile",
+	"Donate": "Donar",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile es gratuito, sin anuncios ni rastreo. Si le resulta útil, una donación ayuda a mantenerlo.",
+	"Donate on Ko-fi": "Donar en Ko-fi",
+	"Could not open {url}: {err}": "No se pudo abrir {url}: {err}"
 }

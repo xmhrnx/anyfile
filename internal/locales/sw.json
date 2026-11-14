@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Mchanganyiko",
 	"Open-source licenses": "Leseni za programu huria",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile imejengwa kutokana na miradi hii ya programu huria. Chagua mmoja kusoma leseni yake."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile imejengwa kutokana na miradi hii ya programu huria. Chagua mmoja kusoma leseni yake.",
+	"Support AnyFile": "Saidia AnyFile",
+	"Donate": "Changia",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile ni bure, bila matangazo wala ufuatiliaji. Ikiwa inakusaidia, mchango huiwezesha kuendelea.",
+	"Donate on Ko-fi": "Changia kupitia Ko-fi",
+	"Could not open {url}: {err}": "Imeshindwa kufungua {url}: {err}"
 }

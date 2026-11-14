@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "ผสม",
 	"Open-source licenses": "สัญญาอนุญาตโอเพนซอร์ส",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile สร้างขึ้นจากโครงการโอเพนซอร์สเหล่านี้ เลือกโครงการเพื่ออ่านสัญญาอนุญาต"
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile สร้างขึ้นจากโครงการโอเพนซอร์สเหล่านี้ เลือกโครงการเพื่ออ่านสัญญาอนุญาต",
+	"Support AnyFile": "สนับสนุน AnyFile",
+	"Donate": "บริจาค",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile ใช้ได้ฟรี ไม่มีโฆษณาหรือการติดตาม หากเป็นประโยชน์กับคุณ การบริจาคช่วยให้พัฒนาต่อไปได้",
+	"Donate on Ko-fi": "บริจาคผ่าน Ko-fi",
+	"Could not open {url}: {err}": "เปิด {url} ไม่ได้: {err}"
 }

@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "মিশ্র",
 	"Open-source licenses": "ওপেন-সোর্স লাইসেন্স",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile এই ওপেন-সোর্স প্রকল্পগুলো দিয়ে তৈরি। কোনোটির লাইসেন্স পড়তে সেটি নির্বাচন করুন।"
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile এই ওপেন-সোর্স প্রকল্পগুলো দিয়ে তৈরি। কোনোটির লাইসেন্স পড়তে সেটি নির্বাচন করুন।",
+	"Support AnyFile": "AnyFile-কে সমর্থন করুন",
+	"Donate": "দান করুন",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile বিনামূল্যে, কোনো বিজ্ঞাপন বা ট্র্যাকিং ছাড়াই। এটি আপনার কাজে লাগলে, একটি অনুদান একে চালু রাখতে সাহায্য করে।",
+	"Donate on Ko-fi": "Ko-fi-তে দান করুন",
+	"Could not open {url}: {err}": "{url} খোলা যায়নি: {err}"
 }

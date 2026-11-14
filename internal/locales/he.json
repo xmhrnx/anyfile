@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "מעורב",
 	"Open-source licenses": "רישיונות קוד פתוח",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile בנוי מפרויקטי הקוד הפתוח האלה. בחרו אחד כדי לקרוא את הרישיון שלו."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile בנוי מפרויקטי הקוד הפתוח האלה. בחרו אחד כדי לקרוא את הרישיון שלו.",
+	"Support AnyFile": "תמכו ב-AnyFile",
+	"Donate": "תרומה",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile חינמי, ללא פרסומות או מעקב. אם הוא עוזר לכם, תרומה עוזרת לו להמשיך.",
+	"Donate on Ko-fi": "תרומה ב-Ko-fi",
+	"Could not open {url}: {err}": "לא ניתן לפתוח את {url}: {err}"
 }

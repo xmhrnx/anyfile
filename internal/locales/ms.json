@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Bercampur",
 	"Open-source licenses": "Lesen sumber terbuka",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile dibina daripada projek sumber terbuka ini. Pilih satu untuk membaca lesennya."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile dibina daripada projek sumber terbuka ini. Pilih satu untuk membaca lesennya.",
+	"Support AnyFile": "Sokong AnyFile",
+	"Donate": "Derma",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile percuma, tanpa iklan atau penjejakan. Jika ia membantu anda, derma membantu ia terus berjalan.",
+	"Donate on Ko-fi": "Derma di Ko-fi",
+	"Could not open {url}: {err}": "Tidak dapat membuka {url}: {err}"
 }

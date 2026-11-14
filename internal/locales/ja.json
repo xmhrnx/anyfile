@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "混在",
 	"Open-source licenses": "オープンソース ライセンス",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile は以下のオープンソース プロジェクトで構成されています。ライセンスを読むには項目を選択してください。"
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile は以下のオープンソース プロジェクトで構成されています。ライセンスを読むには項目を選択してください。",
+	"Support AnyFile": "AnyFile を支援",
+	"Donate": "寄付する",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile は無料で、広告もトラッキングもありません。役に立っているなら、寄付が開発の継続を支えます。",
+	"Donate on Ko-fi": "Ko-fi で寄付",
+	"Could not open {url}: {err}": "{url} を開けませんでした: {err}"
 }

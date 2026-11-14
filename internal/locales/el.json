@@ -316,5 +316,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Μικτά",
 	"Open-source licenses": "Άδειες ανοιχτού κώδικα",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "Το AnyFile βασίζεται σε αυτά τα έργα ανοιχτού κώδικα. Επιλέξτε ένα για να διαβάσετε την άδειά του."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "Το AnyFile βασίζεται σε αυτά τα έργα ανοιχτού κώδικα. Επιλέξτε ένα για να διαβάσετε την άδειά του.",
+	"Support AnyFile": "Υποστηρίξτε το AnyFile",
+	"Donate": "Δωρεά",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "Το AnyFile είναι δωρεάν, χωρίς διαφημίσεις ή παρακολούθηση. Αν σας βοηθά, μια δωρεά το κρατά ζωντανό.",
+	"Donate on Ko-fi": "Δωρεά στο Ko-fi",
+	"Could not open {url}: {err}": "Δεν ήταν δυνατό το άνοιγμα του {url}: {err}"
 }

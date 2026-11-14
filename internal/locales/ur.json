@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "مخلوط",
 	"Open-source licenses": "اوپن سورس لائسنس",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile ان اوپن سورس منصوبوں سے بنا ہے۔ کسی کا لائسنس پڑھنے کے لیے اسے منتخب کریں۔"
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile ان اوپن سورس منصوبوں سے بنا ہے۔ کسی کا لائسنس پڑھنے کے لیے اسے منتخب کریں۔",
+	"Support AnyFile": "AnyFile کی مدد کریں",
+	"Donate": "عطیہ دیں",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile مفت ہے، بغیر اشتہارات یا ٹریکنگ کے۔ اگر یہ آپ کے کام آتا ہے تو ایک عطیہ اسے جاری رکھنے میں مدد کرتا ہے۔",
+	"Donate on Ko-fi": "Ko-fi پر عطیہ دیں",
+	"Could not open {url}: {err}": "{url} نہیں کھل سکا: {err}"
 }

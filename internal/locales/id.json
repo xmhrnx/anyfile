@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Campuran",
 	"Open-source licenses": "Lisensi sumber terbuka",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile dibangun dari proyek sumber terbuka ini. Pilih salah satu untuk membaca lisensinya."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile dibangun dari proyek sumber terbuka ini. Pilih salah satu untuk membaca lisensinya.",
+	"Support AnyFile": "Dukung AnyFile",
+	"Donate": "Donasi",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile gratis, tanpa iklan atau pelacakan. Jika bermanfaat bagi Anda, donasi membantu menjaganya tetap berjalan.",
+	"Donate on Ko-fi": "Donasi di Ko-fi",
+	"Could not open {url}: {err}": "Tidak dapat membuka {url}: {err}"
 }

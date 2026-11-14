@@ -316,5 +316,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Segatud",
 	"Open-source licenses": "Avatud lähtekoodi litsentsid",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile on ehitatud nendest avatud lähtekoodiga projektidest. Valige üks, et lugeda selle litsentsi."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile on ehitatud nendest avatud lähtekoodiga projektidest. Valige üks, et lugeda selle litsentsi.",
+	"Support AnyFile": "Toeta AnyFile'i",
+	"Donate": "Anneta",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile on tasuta, ilma reklaamide ja jälgimiseta. Kui see sind aitab, hoiab annetus seda käigus.",
+	"Donate on Ko-fi": "Anneta Ko-fi kaudu",
+	"Could not open {url}: {err}": "{url} avamine ebaõnnestus: {err}"
 }

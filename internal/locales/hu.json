@@ -316,5 +316,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Vegyes",
 	"Open-source licenses": "Nyílt forráskódú licencek",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "Az AnyFile ezekre a nyílt forráskódú projektekre épül. Válasszon egyet a licence elolvasásához."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "Az AnyFile ezekre a nyílt forráskódú projektekre épül. Válasszon egyet a licence elolvasásához.",
+	"Support AnyFile": "Támogassa az AnyFile-t",
+	"Donate": "Adományozás",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "Az AnyFile ingyenes, reklámok és követés nélkül. Ha hasznos Önnek, egy adomány segít fenntartani.",
+	"Donate on Ko-fi": "Adományozás a Ko-fi-n",
+	"Could not open {url}: {err}": "Nem sikerült megnyitni: {url}: {err}"
 }

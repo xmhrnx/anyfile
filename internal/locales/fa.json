@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "مختلط",
 	"Open-source licenses": "مجوزهای متن‌باز",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile با این پروژه‌های متن‌باز ساخته شده است. یکی را انتخاب کنید تا مجوز آن را بخوانید."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile با این پروژه‌های متن‌باز ساخته شده است. یکی را انتخاب کنید تا مجوز آن را بخوانید.",
+	"Support AnyFile": "از AnyFile حمایت کنید",
+	"Donate": "کمک مالی",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile رایگان است، بدون تبلیغات یا ردیابی. اگر برایتان مفید است، کمک مالی به ادامهٔ آن کمک می‌کند.",
+	"Donate on Ko-fi": "کمک مالی در Ko-fi",
+	"Could not open {url}: {err}": "باز کردن {url} ممکن نشد: {err}"
 }

@@ -322,5 +322,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Mixte",
 	"Open-source licenses": "Licențe open source",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile este construit din aceste proiecte open source. Selectați unul pentru a-i citi licența."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile este construit din aceste proiecte open source. Selectați unul pentru a-i citi licența.",
+	"Support AnyFile": "Susțineți AnyFile",
+	"Donate": "Donați",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile este gratuit, fără reclame sau urmărire. Dacă vă ajută, o donație îl ține în viață.",
+	"Donate on Ko-fi": "Donați pe Ko-fi",
+	"Could not open {url}: {err}": "Nu s-a putut deschide {url}: {err}"
 }

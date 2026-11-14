@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Hỗn hợp",
 	"Open-source licenses": "Giấy phép nguồn mở",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile được xây dựng từ các dự án nguồn mở này. Chọn một dự án để đọc giấy phép của nó."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile được xây dựng từ các dự án nguồn mở này. Chọn một dự án để đọc giấy phép của nó.",
+	"Support AnyFile": "Ủng hộ AnyFile",
+	"Donate": "Quyên góp",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile miễn phí, không quảng cáo hay theo dõi. Nếu nó hữu ích với bạn, một khoản quyên góp giúp duy trì nó.",
+	"Donate on Ko-fi": "Quyên góp trên Ko-fi",
+	"Could not open {url}: {err}": "Không thể mở {url}: {err}"
 }

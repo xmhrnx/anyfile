@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Halo-halo",
 	"Open-source licenses": "Mga open-source na lisensya",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "Binuo ang AnyFile mula sa mga open-source na proyektong ito. Pumili ng isa para basahin ang lisensya nito."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "Binuo ang AnyFile mula sa mga open-source na proyektong ito. Pumili ng isa para basahin ang lisensya nito.",
+	"Support AnyFile": "Suportahan ang AnyFile",
+	"Donate": "Mag-donate",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "Libre ang AnyFile, walang ads o tracking. Kung nakakatulong ito sa iyo, ang donasyon ay nagpapanatili rito.",
+	"Donate on Ko-fi": "Mag-donate sa Ko-fi",
+	"Could not open {url}: {err}": "Hindi mabuksan ang {url}: {err}"
 }

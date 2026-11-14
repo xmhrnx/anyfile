@@ -322,5 +322,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Jaukts",
 	"Open-source licenses": "Atvērtā pirmkoda licences",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile ir veidots no šiem atvērtā pirmkoda projektiem. Izvēlieties vienu, lai izlasītu tā licenci."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile ir veidots no šiem atvērtā pirmkoda projektiem. Izvēlieties vienu, lai izlasītu tā licenci.",
+	"Support AnyFile": "Atbalstiet AnyFile",
+	"Donate": "Ziedot",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile ir bezmaksas, bez reklāmām un izsekošanas. Ja tas jums palīdz, ziedojums palīdz to uzturēt.",
+	"Donate on Ko-fi": "Ziedot Ko-fi",
+	"Could not open {url}: {err}": "Neizdevās atvērt {url}: {err}"
 }

@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Mixt",
 	"Open-source licenses": "Llicències de codi obert",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile està fet amb aquests projectes de codi obert. Seleccioneu-ne un per llegir-ne la llicència."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile està fet amb aquests projectes de codi obert. Seleccioneu-ne un per llegir-ne la llicència.",
+	"Support AnyFile": "Doneu suport a AnyFile",
+	"Donate": "Feu un donatiu",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile és gratuït, sense anuncis ni seguiment. Si us és útil, un donatiu ajuda a mantenir-lo.",
+	"Donate on Ko-fi": "Feu un donatiu a Ko-fi",
+	"Could not open {url}: {err}": "No s'ha pogut obrir {url}: {err}"
 }

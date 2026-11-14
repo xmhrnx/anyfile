@@ -322,5 +322,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Smíšené",
 	"Open-source licenses": "Licence open source",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile je postaven z těchto open source projektů. Vyberte jeden a přečtěte si jeho licenci."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile je postaven z těchto open source projektů. Vyberte jeden a přečtěte si jeho licenci.",
+	"Support AnyFile": "Podpořte AnyFile",
+	"Donate": "Přispět",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile je zdarma, bez reklam a sledování. Pokud vám pomáhá, příspěvek ho udrží při životě.",
+	"Donate on Ko-fi": "Přispět přes Ko-fi",
+	"Could not open {url}: {err}": "Nelze otevřít {url}: {err}"
 }

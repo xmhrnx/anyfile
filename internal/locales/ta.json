@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "கலவை",
 	"Open-source licenses": "திறந்த மூல உரிமங்கள்",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile இந்தத் திறந்த மூலத் திட்டங்களால் உருவாக்கப்பட்டது. ஒன்றின் உரிமத்தைப் படிக்க அதைத் தேர்ந்தெடுக்கவும்."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile இந்தத் திறந்த மூலத் திட்டங்களால் உருவாக்கப்பட்டது. ஒன்றின் உரிமத்தைப் படிக்க அதைத் தேர்ந்தெடுக்கவும்.",
+	"Support AnyFile": "AnyFile-ஐ ஆதரியுங்கள்",
+	"Donate": "நன்கொடை",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile இலவசம், விளம்பரங்களோ கண்காணிப்போ இல்லை. இது உங்களுக்கு உதவினால், ஒரு நன்கொடை இதைத் தொடர உதவும்.",
+	"Donate on Ko-fi": "Ko-fi-இல் நன்கொடை",
+	"Could not open {url}: {err}": "{url}-ஐத் திறக்க முடியவில்லை: {err}"
 }

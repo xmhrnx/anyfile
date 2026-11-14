@@ -322,5 +322,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Mišrios",
 	"Open-source licenses": "Atvirojo kodo licencijos",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile sukurta naudojant šiuos atvirojo kodo projektus. Pasirinkite vieną, kad perskaitytumėte jo licenciją."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile sukurta naudojant šiuos atvirojo kodo projektus. Pasirinkite vieną, kad perskaitytumėte jo licenciją.",
+	"Support AnyFile": "Paremkite AnyFile",
+	"Donate": "Paaukoti",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile yra nemokama, be reklamų ir sekimo. Jei ji jums padeda, auka padeda ją išlaikyti.",
+	"Donate on Ko-fi": "Paaukoti per Ko-fi",
+	"Could not open {url}: {err}": "Nepavyko atidaryti {url}: {err}"
 }

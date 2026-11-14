@@ -328,5 +328,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Змішані",
 	"Open-source licenses": "Ліцензії відкритого коду",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile створено на основі цих проєктів із відкритим кодом. Виберіть один, щоб прочитати його ліцензію."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile створено на основі цих проєктів із відкритим кодом. Виберіть один, щоб прочитати його ліцензію.",
+	"Support AnyFile": "Підтримати AnyFile",
+	"Donate": "Пожертвувати",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile безкоштовний, без реклами та стеження. Якщо він вам допомагає, пожертва допоможе йому розвиватися.",
+	"Donate on Ko-fi": "Підтримати на Ko-fi",
+	"Could not open {url}: {err}": "Не вдалося відкрити {url}: {err}"
 }

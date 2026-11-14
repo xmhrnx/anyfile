@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"context"
 	"runtime"
 	"strconv"
 	"strings"
@@ -32,10 +33,14 @@ type settingsPage struct {
 	language    *dropdown.Select
 
 	reset, done, showFile, installAll *button.Button
+	donate                            *button.Button
 	menuAdd, menuRemove               *button.Button
 
 	licenses giode.Element
 }
+
+// donateURL is where Settings sends people who want to support AnyFile.
+const donateURL = "https://ko-fi.com/xmhrnx"
 
 // numberField is a text input that only accepts whole numbers within
 // the setting's limits. giode has no number input yet.
@@ -197,6 +202,13 @@ func newSettingsPage(u *UI) *settingsPage {
 		}()
 	})
 	sp.installAll = newBtn("download", "Install missing engines", btnPrimary, u.installMissing)
+	sp.donate = newBtn("external", "Donate on Ko-fi", btnSecondary, func() {
+		go func() {
+			if err := u.app.OpenURL(context.Background(), donateURL); err != nil {
+				u.app.Post(func() { u.toast("error", tr("Could not open {url}: {err}", "url", donateURL, "err", err)) })
+			}
+		}()
+	})
 	sp.load()
 	return sp
 }
@@ -346,6 +358,14 @@ func (sp *settingsPage) content() giode.Element {
 	cards := []giode.Element{header, general, ident, explore, files}
 	if external {
 		cards = append(cards, tools)
+	}
+	// Apple allows no donation links to individuals in the Mac App
+	// Store, only in-app purchases.
+	if !platform.Sandboxed() {
+		cards = append(cards, card(giode.Styles{},
+			sectionTitle("sparkles", "Support AnyFile"),
+			sp.row("Donate", "AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.", sp.donate, ""),
+		))
 	}
 	cards = append(cards, card(giode.Styles{},
 		sectionTitle("info", "Open-source licenses"),

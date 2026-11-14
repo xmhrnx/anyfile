@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Karışık",
 	"Open-source licenses": "Açık kaynak lisansları",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile bu açık kaynak projelerinden oluşturulmuştur. Lisansını okumak için birini seçin."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile bu açık kaynak projelerinden oluşturulmuştur. Lisansını okumak için birini seçin.",
+	"Support AnyFile": "AnyFile'ı destekleyin",
+	"Donate": "Bağış yapın",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile ücretsizdir; reklam ya da izleme yoktur. İşinize yarıyorsa, bir bağış onu ayakta tutar.",
+	"Donate on Ko-fi": "Ko-fi'de bağış yapın",
+	"Could not open {url}: {err}": "{url} açılamadı: {err}"
 }

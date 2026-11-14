@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF(Unix)",
 	"Mixed": "혼합",
 	"Open-source licenses": "오픈 소스 라이선스",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile은 다음 오픈 소스 프로젝트로 만들어졌습니다. 라이선스를 읽으려면 항목을 선택하세요."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile은 다음 오픈 소스 프로젝트로 만들어졌습니다. 라이선스를 읽으려면 항목을 선택하세요.",
+	"Support AnyFile": "AnyFile 후원하기",
+	"Donate": "후원",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile은 광고나 추적 없이 무료입니다. 도움이 되었다면 후원으로 개발을 이어 갈 수 있습니다.",
+	"Donate on Ko-fi": "Ko-fi에서 후원",
+	"Could not open {url}: {err}": "{url}을(를) 열 수 없습니다: {err}"
 }

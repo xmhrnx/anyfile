@@ -328,5 +328,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Mešani",
 	"Open-source licenses": "Odprtokodne licence",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile je zgrajen iz teh odprtokodnih projektov. Izberite enega, da preberete njegovo licenco."
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile je zgrajen iz teh odprtokodnih projektov. Izberite enega, da preberete njegovo licenco.",
+	"Support AnyFile": "Podprite AnyFile",
+	"Donate": "Doniraj",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile je brezplačen, brez oglasov in sledenja. Če vam pomaga, ga donacija ohranja pri življenju.",
+	"Donate on Ko-fi": "Doniraj na Ko-fi",
+	"Could not open {url}: {err}": "{url} ni bilo mogoče odpreti: {err}"
 }

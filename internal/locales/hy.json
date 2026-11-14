@@ -298,5 +298,10 @@
 	"LF (Unix)": "LF (Unix)",
 	"Mixed": "Խառը",
 	"Open-source licenses": "Բաց կոդի լիցենզիաներ",
-	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile-ը կառուցված է այս բաց կոդով նախագծերից։ Ընտրեք մեկը՝ դրա լիցենզիան կարդալու համար։"
+	"AnyFile is built from these open-source projects. Select one to read its license.": "AnyFile-ը կառուցված է այս բաց կոդով նախագծերից։ Ընտրեք մեկը՝ դրա լիցենզիան կարդալու համար։",
+	"Support AnyFile": "Աջակցեք AnyFile-ին",
+	"Donate": "Նվիրաբերել",
+	"AnyFile is free, without ads or tracking. If it helps you, a donation keeps it going.": "AnyFile-ն անվճար է՝ առանց գովազդի և հետևման։ Եթե այն օգնում է ձեզ, նվիրատվությունը պահում է այն։",
+	"Donate on Ko-fi": "Նվիրաբերել Ko-fi-ում",
+	"Could not open {url}: {err}": "Չհաջողվեց բացել {url}․ {err}"
 }
