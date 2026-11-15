@@ -38,7 +38,11 @@ const (
 )
 
 const (
-	fontUI   = "Segoe UI"
+	// fontUI is the interface font: Segoe UI on Windows, Noto Sans
+	// elsewhere (loadFonts). The name is AnyFile's own so it never
+	// matches a system font: one that isn't registered falls back to
+	// the system's fonts before the bundled ones.
+	fontUI   = "AnyFile UI"
 	fontMono = "Go Mono"
 )
 
@@ -150,6 +154,7 @@ func loadFonts(lang string) {
 			faces = append(faces, p)
 		}
 	}
+	haveUI := len(faces) > 0
 	faces = append(faces, gofont.Collection()...)
 	order := notoOrder
 	if strings.HasPrefix(lang, "ja") {
@@ -174,9 +179,16 @@ func loadFonts(lang string) {
 				continue
 			}
 			for _, p := range parsed {
-				p.Font.Typeface = font.Typeface(name)
+				// The prefix keeps the system's own Noto fonts (macOS
+				// ships Noto Sans Armenian and Georgian) from being
+				// picked instead: font names match ignoring spaces.
+				p.Font.Typeface = font.Typeface("AnyFile " + name)
 				p.Font.Weight = w.weight
 				faces = append(faces, p)
+				if name == "NotoSans" && !haveUI {
+					p.Font.Typeface = fontUI
+					faces = append(faces, p)
+				}
 			}
 		}
 	}
