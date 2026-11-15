@@ -75,8 +75,15 @@ jobs:
           giode doctor || true
           giode build -arch ${{ matrix.arch }} windows windows-installer
           CGO_ENABLED=0 GOARCH=${{ matrix.arch }} go build -trimpath -ldflags "-s -w -X main.version=$TAG" -o dist/windows/anyprobe.exe ./cmd/anyprobe
-      # Last, under the name reserved in Partner Center, which the
-      # package's display name must match.
+      - name: Package
+        run: |
+          mkdir -p out pkg
+          cp dist/windows/AnyFile.exe dist/windows/anyprobe.exe README.md pkg/
+          (cd pkg && 7z a -tzip "../out/AnyFile-$TAG-windows-${{ matrix.arch }}.zip" . > /dev/null)
+          cp dist/windows/*-setup.exe "out/AnyFile-$TAG-windows-${{ matrix.arch }}-setup.exe"
+          ls -la out
+      # Last, since it can clear dist/windows, and under the name reserved
+      # in Partner Center, which the package's display name must match.
       - name: Build the Store package
         run: |
           # The resources the CLI compiled for AnyFile.exe would clash.
@@ -84,15 +91,9 @@ jobs:
           sed -i 's/^name = "AnyFile"$/name = "AnyFile File Inspector"/' giode.toml
           grep '^name =' giode.toml
           giode build -arch ${{ matrix.arch }} msix
-      - name: Package
-        run: |
-          mkdir -p out pkg
-          cp dist/windows/AnyFile.exe dist/windows/anyprobe.exe README.md pkg/
-          (cd pkg && 7z a -tzip "../out/AnyFile-$TAG-windows-${{ matrix.arch }}.zip" . > /dev/null)
-          cp dist/windows/*-setup.exe "out/AnyFile-$TAG-windows-${{ matrix.arch }}-setup.exe"
           mkdir -p store
           cp dist/windows/*.msix "store/AnyFile-$TAG-${{ matrix.arch }}.msix"
-          ls -la out store
+          ls -la store
       - uses: actions/upload-artifact@v4
         with:
           name: release-windows-${{ matrix.arch }}
@@ -150,6 +151,7 @@ jobs:
     name: macOS universal
     needs: test
     runs-on: macos-latest
+    timeout-minutes: 120
     env:
       MACOSX_DEPLOYMENT_TARGET: "11.0"
       # The download is signed with a Developer ID with this set, and
@@ -178,6 +180,7 @@ jobs:
           security default-keychain -s build.keychain
           security list-keychains -d user -s build.keychain $(security list-keychains -d user | tr -d '"')
           security unlock-keychain -p ci build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
           echo "$MACOS_CERT_BASE64" | base64 -d > cert.p12
           security import cert.p12 -k build.keychain -P "$MACOS_CERT_PASS" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple: -s -k ci build.keychain
@@ -228,6 +231,9 @@ jobs:
           dmg="out/AnyFile-$TAG-macos-universal.dmg"
           hdiutil create -volname AnyFile -srcfolder dmg -ov -format UDZO "$dmg"
           if [ -n "$MACOS_IDENTITY" ]; then
+            # Notarizing can outlast the keychain's lock timer; codesign
+            # then waits forever for a password.
+            security unlock-keychain -p ci build.keychain
             codesign --force --timestamp --sign "$MACOS_IDENTITY" "$dmg"
             if [ -n "$GIODE_NOTARY_ID" ]; then
               notarize "$dmg"
@@ -250,6 +256,7 @@ jobs:
             security list-keychains -d user -s build.keychain $(security list-keychains -d user | tr -d '"')
           fi
           security unlock-keychain -p ci build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
           echo "$MACOS_STORE_CERT_BASE64" | base64 -d > store.p12
           echo "$MACOS_INSTALLER_CERT_BASE64" | base64 -d > installer.p12
           security import store.p12 -k build.keychain -P "$MACOS_STORE_CERT_PASS" -T /usr/bin/codesign -T /usr/bin/productbuild
