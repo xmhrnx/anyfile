@@ -78,7 +78,11 @@ jobs:
       - name: Package
         run: |
           mkdir -p out pkg
-          cp dist/windows/AnyFile.exe dist/windows/anyprobe.exe README.md pkg/
+          # The CLI names non-amd64 builds AnyFile-<arch>.exe.
+          exe=dist/windows/AnyFile-${{ matrix.arch }}.exe
+          [ -f "$exe" ] || exe=dist/windows/AnyFile.exe
+          cp "$exe" pkg/AnyFile.exe
+          cp dist/windows/anyprobe.exe README.md pkg/
           (cd pkg && 7z a -tzip "../out/AnyFile-$TAG-windows-${{ matrix.arch }}.zip" . > /dev/null)
           cp dist/windows/*-setup.exe "out/AnyFile-$TAG-windows-${{ matrix.arch }}-setup.exe"
           ls -la out
@@ -182,7 +186,7 @@ jobs:
           security unlock-keychain -p ci build.keychain
           security set-keychain-settings -lut 21600 build.keychain
           echo "$MACOS_CERT_BASE64" | base64 -d > cert.p12
-          security import cert.p12 -k build.keychain -P "$MACOS_CERT_PASS" -T /usr/bin/codesign
+          security import cert.p12 -k build.keychain -P "$MACOS_CERT_PASS" -A
           security set-key-partition-list -S apple-tool:,apple: -s -k ci build.keychain
           rm cert.p12
           id=$(security find-identity -v -p codesigning build.keychain | grep -o '"Developer ID Application: [^"]*"' | head -1 | tr -d '"')
@@ -208,6 +212,7 @@ jobs:
           fi
           codesign --verify --strict --verbose=2 dist/macos/AnyFile.app
       - name: Package
+        timeout-minutes: 60
         env:
           GIODE_NOTARY_TEAM_ID: ${{ secrets.GIODE_NOTARY_TEAM_ID }}
           GIODE_NOTARY_PASS: ${{ secrets.GIODE_NOTARY_PASS }}
@@ -259,15 +264,18 @@ jobs:
           security set-keychain-settings -lut 21600 build.keychain
           echo "$MACOS_STORE_CERT_BASE64" | base64 -d > store.p12
           echo "$MACOS_INSTALLER_CERT_BASE64" | base64 -d > installer.p12
-          security import store.p12 -k build.keychain -P "$MACOS_STORE_CERT_PASS" -T /usr/bin/codesign -T /usr/bin/productbuild
-          security import installer.p12 -k build.keychain -P "$MACOS_INSTALLER_CERT_PASS" -T /usr/bin/codesign -T /usr/bin/productbuild
+          security import store.p12 -k build.keychain -P "$MACOS_STORE_CERT_PASS" -A
+          security import installer.p12 -k build.keychain -P "$MACOS_INSTALLER_CERT_PASS" -A
           security set-key-partition-list -S apple-tool:,apple: -s -k ci build.keychain
           rm store.p12 installer.p12
           echo "$MACOS_PROFILE_BASE64" | base64 -d > "$RUNNER_TEMP/store.provisionprofile"
           echo "GIODE_MACOS_STORE_PROFILE=$RUNNER_TEMP/store.provisionprofile" >> "$GITHUB_ENV"
       # Sandboxed, with only the built-in engines, and without anyprobe.
+      # A failure here doesn't hold back the release downloads.
       - name: Build for the Mac App Store
         if: env.GIODE_MACOS_STORE_PROFILE != ''
+        timeout-minutes: 15
+        continue-on-error: true
         run: |
           giode build mas
           mkdir -p store
