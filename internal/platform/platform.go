@@ -7,6 +7,7 @@ package platform
 import (
 	"os"
 	"runtime"
+	"strings"
 )
 
 // FileDropSupported reports whether files can be dropped on the window
@@ -25,7 +26,17 @@ func FileDropSupported() bool {
 // user hands it, and the store forbids downloading programs, so the
 // external engines are off there.
 func Sandboxed() bool {
-	return runtime.GOOS == "darwin" && os.Getenv("APP_SANDBOX_CONTAINER_ID") != ""
+	return sandboxed(runtime.GOOS, os.Getenv)
+}
+
+// sandboxed tells from the environment: macOS doesn't always set
+// APP_SANDBOX_CONTAINER_ID (a TestFlight copy didn't), but a sandboxed
+// app's home is always its container, ~/Library/Containers/<id>/Data.
+func sandboxed(goos string, getenv func(string) string) bool {
+	if goos != "darwin" {
+		return false
+	}
+	return getenv("APP_SANDBOX_CONTAINER_ID") != "" || strings.Contains(getenv("HOME"), "/Library/Containers/")
 }
 
 // IsFile reports whether p is an existing regular file.
