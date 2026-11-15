@@ -9,6 +9,7 @@ import (
 	"context"
 	"image"
 	"log"
+	"runtime"
 	"strings"
 	"time"
 
@@ -127,6 +128,11 @@ func Run(args []string, version string) error {
 		Background: colSidebar, Color: colTextSoft, Height: 44, FontSize: 13,
 		BorderWidth: 1, BorderColor: colBorder,
 	}).Icon(logo(22)).Leading(u.openBtn, rawEl(u.tabStrip)).Trailing(u.settingsBtn)
+	if runtime.GOOS == "darwin" {
+		// Round close, minimize and zoom buttons on the left, as in
+		// other Mac apps. The title stays before the tabs.
+		u.bar.Variant(giode.TitleBarMac).TitlePlacement(giode.TitleBarTitleStart)
+	}
 	// giode runs a context action itself (OnContextAction).
 	if paths := fileArgs(args); len(paths) > 0 {
 		u.app.Post(func() { u.openPaths(paths) })
