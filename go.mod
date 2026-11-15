@@ -4,6 +4,7 @@ go 1.26.6
 
 require (
 	gioui.org v0.10.2
+	github.com/go-text/typesetting v0.3.4
 	github.com/klauspost/compress v1.20.3
 	github.com/ulikunitz/xz v0.5.17
 	github.com/xmhrnx/giode v1.0.24-alpha.1
@@ -18,7 +19,6 @@ require (
 	git.wow.st/gmp/jni v0.0.0-20210610011705-34026c7e22d0 // indirect
 	github.com/esiqveland/notify v0.11.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
-	github.com/go-text/typesetting v0.3.4 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef // indirect
 	github.com/yuin/goldmark v1.4.13 // indirect

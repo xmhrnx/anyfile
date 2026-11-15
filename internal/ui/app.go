@@ -41,7 +41,9 @@ type UI struct {
 	emptyOpenBtn *button.Button
 
 	settings     *settingsPage
+	updates      *updates
 	engines      map[string]*engineInstall
+	moreEngines  *giode.PressableElement
 	showSettings bool
 	dropZone     *giode.PressableElement
 	version      string
@@ -50,9 +52,9 @@ type UI struct {
 // Run opens the window and blocks until it closes. A path argument is
 // opened right away; version is shown in the status bar.
 func Run(args []string, version string) error {
-	loadFonts()
 	applyTheme()
 	settingsErr := settings.Load()
+	loadFonts(locale(settings.Get()))
 	u := &UI{version: version}
 	cfg := giode.Config{
 		Title:      "AnyFile",
@@ -96,6 +98,7 @@ func Run(args []string, version string) error {
 		Inset(giode.Inset{Top: 44, Bottom: 28}) // clear of the title and status bars
 	u.engines = newEngineInstalls(u)
 	u.inspector = newInspector(u)
+	u.updates = newUpdates(u)
 	u.settings = newSettingsPage(u)
 	u.newTabStrip()
 	if settingsErr != nil {
@@ -109,6 +112,17 @@ func Run(args []string, version string) error {
 	u.dropZone = giode.Pressable(u.dropZoneView).
 		OnClick(func(giode.ClickEvent) { u.pickFile() })
 	appText.add(func() { u.dropZone.Label(tr("Choose a file")) })
+	u.moreEngines = giode.Pressable(func(s giode.PressState) giode.Element {
+		c := colAccent
+		if s.Hovered || s.Focused {
+			c = colAccent2
+		}
+		return giode.Text(tr("More engines?"), txt(11.5, c))
+	}).OnClick(func(giode.ClickEvent) {
+		u.showSettings = true
+		u.settings.scroll.ScrollTo(0)
+	})
+	appText.add(func() { u.moreEngines.Label(tr("More engines?")) })
 	u.bar = giode.TitleBar(u.app, "AnyFile", giode.Styles{
 		Background: colSidebar, Color: colTextSoft, Height: 44, FontSize: 13,
 		BorderWidth: 1, BorderColor: colBorder,
@@ -116,6 +130,9 @@ func Run(args []string, version string) error {
 	// giode runs a context action itself (OnContextAction).
 	if paths := fileArgs(args); len(paths) > 0 {
 		u.app.Post(func() { u.openPaths(paths) })
+	}
+	if u.updates.enabled() && settings.Get().CheckUpdates {
+		u.app.Post(func() { u.updates.run(false) })
 	}
 	return u.app.Run(u.view)
 }
@@ -229,6 +246,12 @@ func (u *UI) emptyState() giode.Element {
 		{"layers", "Explores inside", "Archives, Office files, PDFs, installers, mail, disc images, media streams, blobs."},
 		{"external", "Opens in your apps", "Every item opens in the viewer your system uses for its real type."},
 	}
+	if platform.Sandboxed() {
+		// The Mac App Store build has no TrID, and no FFmpeg for media
+		// streams.
+		features[0].text = "Signatures and structure probes, plus its own heuristics when those fail."
+		features[1].text = "Archives, Office files, PDFs, installers, mail, disc images, blobs."
+	}
 	var cards []giode.Element
 	for _, f := range features {
 		f.title, f.text = tr(f.title), tr(f.text)
@@ -297,6 +320,9 @@ func (u *UI) statusBar(root *session.Node) giode.Element {
 		engines = append(engines, status("Oodle", oodle.Find(near) != ""))
 	}
 	engines = append(engines, status(tr("Built-in (signatures, carver, {count} engines)", "count", explore.EngineCount()), true))
+	if platform.Sandboxed() {
+		engines = append(engines, u.moreEngines)
+	}
 	right := giode.Text("AnyFile "+u.version+" · "+tr("Drop a file anywhere in the window"), txt(11.5, colFaint))
 	if !platform.FileDropSupported() {
 		right = giode.Text("AnyFile "+u.version+" · "+tr("Use Open file to inspect a file"), txt(11.5, colFaint))

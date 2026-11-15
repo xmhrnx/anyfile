@@ -49,6 +49,9 @@ type Settings struct {
 	// system.
 	Language string `json:"language"`
 
+	// CheckUpdates asks GitHub for a newer release at startup.
+	CheckUpdates bool `json:"check_updates"`
+
 	// External tools ("" = find automatically).
 	TrIDPath     string `json:"trid_path"`
 	MagikaPath   string `json:"magika_path"`
@@ -77,6 +80,7 @@ func Defaults() Settings {
 		MaxDecompressMB: 2048,
 		Checksums:       true,
 		ChecksumMaxMB:   0,
+		CheckUpdates:    true,
 	}
 }
 

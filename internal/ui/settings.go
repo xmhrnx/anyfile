@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"context"
 	"runtime"
 	"strconv"
 	"strings"
@@ -33,7 +32,7 @@ type settingsPage struct {
 	language    *dropdown.Select
 
 	reset, done, showFile, installAll *button.Button
-	donate                            *button.Button
+	donate, github                    *button.Button
 	menuAdd, menuRemove               *button.Button
 
 	licenses giode.Element
@@ -68,7 +67,7 @@ var tridModeLabels = []string{"If unsure", "Always", "Never"}
 func newSettingsPage(u *UI) *settingsPage {
 	sp := &settingsPage{u: u, numbers: map[string]*numberField{}, checks: map[string]*toggle.Switch{}, checkLabels: map[string]string{}, paths: map[string]*pathField{}}
 	sp.scroll = giode.Scroll(sp.content, giode.Styles{ScrollBar: giode.ScrollBar{ThumbColor: "#ffffff22", Width: 6, Radius: 3}})
-	sp.licenses = giode.LicensesView(licensesJSON, giode.Styles{Color: colText, FontSize: 13})
+	sp.licenses = giode.LicensesView(appLicenses(), giode.Styles{Color: colText, FontSize: 13})
 	field := giode.Styles{Background: colSurface2, Color: colText, BorderColor: colBorderHi, BorderRadius: 8, Padding: giode.SymmetricInset(10, 7), FontSize: 13}
 
 	num := func(key, unit string, get func(settings.Settings) int, set func(*settings.Settings, int)) {
@@ -104,6 +103,8 @@ func newSettingsPage(u *UI) *settingsPage {
 		func(s settings.Settings) bool { return s.AutoCarve }, func(s *settings.Settings, v bool) { s.AutoCarve = v })
 	check("checksums", "Compute MD5, SHA-1 and SHA-256 when a file is selected",
 		func(s settings.Settings) bool { return s.Checksums }, func(s *settings.Settings, v bool) { s.Checksums = v })
+	check("check_updates", "Check for updates when AnyFile starts",
+		func(s settings.Settings) bool { return s.CheckUpdates }, func(s *settings.Settings, v bool) { s.CheckUpdates = v })
 
 	// Width -1 inside a fixed-width box (see segmentedBox): giode's
 	// Segmented measures each segment as wide as the space it's given.
@@ -130,6 +131,7 @@ func newSettingsPage(u *UI) *settingsPage {
 				loc = locales.Languages[i-1].Locale
 			}
 			sp.apply(func(s *settings.Settings) { s.Language = loc })
+			loadFonts(locale(settings.Get()))
 			giode.SetLocale(locale(settings.Get()))
 		})
 	appText.add(func() { sp.language.Options()[0] = tr("System default") })
@@ -170,6 +172,7 @@ func newSettingsPage(u *UI) *settingsPage {
 			u.toast("error", tr("Could not save settings: {err}", "err", err))
 		}
 		sp.load()
+		loadFonts(locale(settings.Get()))
 		giode.SetLocale(locale(settings.Get()))
 		u.toast("ok", tr("Settings reset to defaults"))
 	})
@@ -202,13 +205,8 @@ func newSettingsPage(u *UI) *settingsPage {
 		}()
 	})
 	sp.installAll = newBtn("download", "Install missing engines", btnPrimary, u.installMissing)
-	sp.donate = newBtn("external", "Donate on Ko-fi", btnSecondary, func() {
-		go func() {
-			if err := u.app.OpenURL(context.Background(), donateURL); err != nil {
-				u.app.Post(func() { u.toast("error", tr("Could not open {url}: {err}", "url", donateURL, "err", err)) })
-			}
-		}()
-	})
+	sp.donate = newBtn("external", "Donate on Ko-fi", btnSecondary, func() { u.openURL(donateURL) })
+	sp.github = newBtn("external", "Get AnyFile from GitHub", btnPrimary, func() { u.openURL(releasesURL) })
 	sp.load()
 	return sp
 }
@@ -226,6 +224,7 @@ func (sp *settingsPage) load() {
 	}
 	sp.checks["auto_carve"].SetChecked(s.AutoCarve)
 	sp.checks["checksums"].SetChecked(s.Checksums)
+	sp.checks["check_updates"].SetChecked(s.CheckUpdates)
 	for i, m := range tridModes {
 		if m == s.MagikaMode {
 			sp.magikaMode.SetSelected(i)
@@ -355,9 +354,26 @@ func (sp *settingsPage) content() giode.Element {
 		sp.engineRow("ffmpeg", "FFmpeg", "Lists media streams (ffprobe) and copies them out without re-encoding (ffmpeg).", "ffmpeg_path", "ffprobe_path"),
 		sp.pathRow("oodle_path", "Oodle", "oo2core_*_win64.dll, shipped with many games. It is proprietary, so AnyFile can't install it; it also looks in the opened file's folder."),
 	)
-	cards := []giode.Element{header, general, ident, explore, files}
+	cards := []giode.Element{header}
+	if !external {
+		// First, where the status bar's "More engines?" lands.
+		cards = append(cards, card(giode.Styles{},
+			sectionTitle("cpu", "More engines"),
+			giode.Text(tr("This copy is from the Mac App Store, so it uses only AnyFile's built-in engines. Apple doesn't let App Store apps install other programs, so 7-Zip, FFmpeg, Magika and TrID aren't available here."), txtw(12.5, colMuted, giode.Styles{LineHeight: 18})),
+			giode.Text(tr("The free download from GitHub can install them. It then opens rar, 7z and cab archives, disk images and installers, lists and saves the streams in media files, and identifies thousands more file types."), txtw(12.5, colMuted, giode.Styles{LineHeight: 18})),
+			giode.Row(giode.Styles{}, sp.github),
+		))
+	}
+	cards = append(cards, general, ident, explore, files)
 	if external {
 		cards = append(cards, tools)
+	}
+	if sp.u.updates.enabled() {
+		cards = append(cards, card(giode.Styles{},
+			sectionTitle("download", "Updates"),
+			sp.u.updates.view(),
+			sp.checkRow("check_updates", "AnyFile asks GitHub for its latest release. Nothing about you or your files is sent."),
+		))
 	}
 	// Apple allows no donation links to individuals in the Mac App
 	// Store, only in-app purchases.

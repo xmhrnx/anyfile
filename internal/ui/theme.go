@@ -1,8 +1,11 @@
 package ui
 
 import (
+	"embed"
+	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"gioui.org/font"
 	"gioui.org/font/gofont"
@@ -78,9 +81,47 @@ func catColor(c detect.Category) string {
 	return "#8b98ad"
 }
 
+// notoFonts are Noto fonts, and Hind Siliguri for Bengali, cut down to
+// the characters of AnyFile's translations (fonts/subset.py), so every
+// language draws the same on every system: left to the system's
+// fonts, Korean fell to a Windows font without real Hangul glyphs.
+//
+//go:embed fonts/*.ttf fonts/*.txt
+var notoFonts embed.FS
+
+// appLicenses is licensesJSON, which lists Go modules, with the
+// bundled fonts' licenses added.
+func appLicenses() []byte {
+	var list []map[string]string
+	if err := json.Unmarshal(licensesJSON, &list); err != nil {
+		return licensesJSON
+	}
+	for _, f := range []struct{ name, file string }{
+		{"Noto Sans fonts", "fonts/OFL-Noto.txt"},
+		{"Hind Siliguri font", "fonts/OFL-HindSiliguri.txt"},
+	} {
+		if b, err := notoFonts.ReadFile(f.file); err == nil {
+			list = append(list, map[string]string{"module": f.name, "type": "OFL-1.1", "text": string(b)})
+		}
+	}
+	b, err := json.Marshal(list)
+	if err != nil {
+		return licensesJSON
+	}
+	return b
+}
+
+// notoOrder is the order the Noto fonts are tried in. Japanese and
+// Chinese share most characters but draw them differently, so the
+// interface language's comes first (loadFonts).
+var notoOrder = []string{"NotoSans", "NotoSansSC", "NotoSansJP", "NotoSansKR", "NotoSansArabic",
+	"NotoSansHebrew", "NotoSansDevanagari", "HindSiliguri", "NotoSansTamil", "NotoSansThai",
+	"NotoSansArmenian", "NotoSansGeorgian"}
+
 // loadFonts prefers the platform UI font for a native feel and keeps
-// the Go fonts for monospace text and as a fallback.
-func loadFonts() {
+// the Go fonts for monospace text and as a fallback, then the Noto
+// fonts for the scripts those lack. lang is the interface language.
+func loadFonts(lang string) {
 	faces := []font.FontFace{}
 	dir := filepath.Join(os.Getenv("WINDIR"), "Fonts")
 	for _, f := range []struct {
@@ -110,6 +151,35 @@ func loadFonts() {
 		}
 	}
 	faces = append(faces, gofont.Collection()...)
+	order := notoOrder
+	if strings.HasPrefix(lang, "ja") {
+		order = append([]string{"NotoSansJP"}, notoOrder...)
+	}
+	seen := map[string]bool{}
+	for _, name := range order {
+		if seen[name] {
+			continue
+		}
+		seen[name] = true
+		for _, w := range []struct {
+			style  string
+			weight font.Weight
+		}{{"Regular", font.Normal}, {"Bold", font.Bold}} {
+			b, err := notoFonts.ReadFile("fonts/" + name + "-" + w.style + ".ttf")
+			if err != nil {
+				continue
+			}
+			parsed, err := opentype.ParseCollection(b)
+			if err != nil {
+				continue
+			}
+			for _, p := range parsed {
+				p.Font.Typeface = font.Typeface(name)
+				p.Font.Weight = w.weight
+				faces = append(faces, p)
+			}
+		}
+	}
 	giode.RegisterFonts(faces)
 }
 
