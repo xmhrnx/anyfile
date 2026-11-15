@@ -13,7 +13,7 @@ icon = "assets/icon.png"
 package = "./cmd/anyfile"
 publisher = "xmhrnx"
 description = "Find out what any file really is, explore what's inside, and open each part in your own apps."
-website = "https://github.com/xmhrnx/anyfile"
+website = "https://xmhrnx.github.io/anyfile/"
 ldflags = "-s -w -X main.version=dev"
 # The open-source licenses Settings lists; every build refreshes it.
 licenses = "internal/ui/licenses.json"
