@@ -82,7 +82,8 @@ func TestFontsCoverLocales(t *testing.T) {
 	for lang, ss := range texts {
 		missing := map[rune]bool{}
 		for _, s := range ss {
-			for _, r := range s {
+			// Section headings are shown in capitals.
+			for _, r := range s + strings.ToUpper(s) {
 				// Joiners and marks shape with their neighbours.
 				if r <= ' ' || unicode.In(r, unicode.Cf) || covered(r) {
 					continue

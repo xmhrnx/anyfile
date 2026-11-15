@@ -59,6 +59,10 @@ def text_for(langs):
     for lang, cs in by_lang.items():
         if langs is None or lang in langs:
             chars |= cs
+    # Section headings are shown in capitals (Georgian's are the
+    # Mtavruli letters), and either case may turn up.
+    for c in list(chars):
+        chars |= set(c.upper()) | set(c.lower())
     return "".join(sorted(chars))
 
 
