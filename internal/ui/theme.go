@@ -154,8 +154,7 @@ func loadFonts(lang string) {
 			faces = append(faces, p)
 		}
 	}
-	haveUI := len(faces) > 0
-	faces = append(faces, gofont.Collection()...)
+	var noto []font.FontFace
 	order := notoOrder
 	if strings.HasPrefix(lang, "ja") {
 		order = append([]string{"NotoSansJP"}, notoOrder...)
@@ -184,14 +183,24 @@ func loadFonts(lang string) {
 				// picked instead: font names match ignoring spaces.
 				p.Font.Typeface = font.Typeface("AnyFile " + name)
 				p.Font.Weight = w.weight
-				faces = append(faces, p)
-				if name == "NotoSans" && !haveUI {
-					p.Font.Typeface = fontUI
-					faces = append(faces, p)
-				}
+				noto = append(noto, p)
 			}
 		}
 	}
+	if len(faces) == 0 {
+		// No Segoe UI: Noto Sans is the interface font.
+		for _, p := range noto {
+			if p.Font.Typeface == "AnyFile NotoSans" {
+				p.Font.Typeface = fontUI
+				faces = append(faces, p)
+			}
+		}
+	}
+	// The interface font comes first: text that names no family, like
+	// giode's own components, uses the first face (the Go fonts' wide
+	// hyphen showed on macOS).
+	faces = append(faces, gofont.Collection()...)
+	faces = append(faces, noto...)
 	giode.RegisterFonts(faces)
 }
 
