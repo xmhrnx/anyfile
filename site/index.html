@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AnyFile: what is this file, really?</title>
+<meta name="description" content="AnyFile tells you what any file really is, lets you explore everything inside it, and opens each part in the apps you already have. Free for Windows, macOS and Linux.">
+<meta property="og:title" content="AnyFile">
+<meta property="og:description" content="Find out what any file really is, explore what's inside, and open each part in your own apps.">
+<meta property="og:image" content="img/mismatch.png">
+<meta name="theme-color" content="#0a0e16">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<style>
+:root {
+  --bg: #0a0e16; --bg2: #0e131d; --surface: #121926; --surface2: #172031; --raised: #1c2639;
+  --border: #222d42; --border-hi: #2f3d58;
+  --text: #e7edf7; --soft: #b9c3d4; --muted: #7d8aa3; --faint: #56627a;
+  --accent: #7c83ff; --accent2: #22d3ee; --ok: #34d399; --warn: #fbbf24; --danger: #f87171;
+  --grad: linear-gradient(120deg, #7c83ff, #22d3ee);
+  --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --radius: 18px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+.wrap { width: min(1160px, 100% - 40px); margin-inline: auto; }
+.grad-text { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.mono { font-family: var(--mono); }
+
+/* Background: a faint grid that fades out, and two slow glows. */
+.backdrop { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.backdrop::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 56px 56px; opacity: .35;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 75%);
+}
+.glow { position: absolute; width: 640px; height: 640px; border-radius: 50%; filter: blur(120px); opacity: .28; animation: drift 22s ease-in-out infinite alternate; }
+.glow.a { background: var(--accent); top: -260px; left: -120px; }
+.glow.b { background: var(--accent2); top: -200px; right: -200px; animation-delay: -11s; opacity: .18; }
+@keyframes drift { to { transform: translate(120px, 80px) scale(1.15); } }
+
+/* Navigation */
+nav { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); background: rgba(10, 14, 22, .72); border-bottom: 1px solid transparent; transition: border-color .3s; }
+nav.scrolled { border-bottom-color: var(--border); }
+nav .wrap { display: flex; align-items: center; gap: 28px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; text-decoration: none; }
+.brand img { width: 30px; height: 30px; border-radius: 8px; }
+nav .links { display: flex; gap: 24px; margin-left: auto; font-size: 14.5px; }
+nav .links a { color: var(--soft); text-decoration: none; transition: color .2s; }
+nav .links a:hover { color: var(--text); }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 12px;
+  font-weight: 600; font-size: 15px; text-decoration: none; border: 1px solid var(--border-hi);
+  background: var(--surface2); color: var(--text); cursor: pointer; transition: transform .2s, box-shadow .2s, background .2s;
+}
+.btn:hover { transform: translateY(-2px); background: var(--raised); }
+.btn.primary { background: var(--grad); border: 0; color: #0a0e16; box-shadow: 0 10px 40px -10px rgba(124, 131, 255, .7); }
+.btn.primary:hover { box-shadow: 0 16px 50px -10px rgba(34, 211, 238, .7); }
+.btn.small { padding: 8px 16px; font-size: 14px; }
+.btn svg { width: 18px; height: 18px; }
+
+/* Hero */
+.hero { padding: 90px 0 40px; text-align: center; }
+.pill {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 99px;
+  background: rgba(124, 131, 255, .12); border: 1px solid rgba(124, 131, 255, .3); color: var(--soft); font-size: 13.5px;
+}
+.pill b { color: var(--accent2); font-weight: 600; }
+h1 { font-size: clamp(42px, 7.2vw, 86px); line-height: 1.02; letter-spacing: -.035em; margin: 26px auto 22px; max-width: 13ch; }
+.lede { font-size: clamp(17px, 2vw, 20px); color: var(--soft); max-width: 640px; margin: 0 auto 34px; }
+.cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.cta-note { margin-top: 14px; font-size: 13.5px; color: var(--muted); }
+
+/* The disguise: a file whose name lies, and the truth underneath. */
+.disguise { margin: 64px auto 0; display: flex; align-items: center; justify-content: center; gap: 26px; flex-wrap: wrap; }
+.fcard {
+  width: 230px; padding: 20px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border);
+  text-align: left; position: relative;
+}
+.fcard .ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 14px; transition: background .5s; }
+.fcard .ico svg { width: 22px; height: 22px; }
+.fcard .label { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+.fcard .name { font-family: var(--mono); font-size: 17px; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fcard .type { font-size: 15px; font-weight: 600; margin-top: 4px; }
+.fcard.lie .ico { background: var(--raised); color: var(--muted); }
+.fcard.truth { border-color: rgba(34, 211, 238, .45); box-shadow: 0 0 0 1px rgba(34, 211, 238, .1), 0 20px 60px -20px rgba(34, 211, 238, .45); }
+.fcard.truth .ico { background: rgba(34, 211, 238, .15); color: var(--accent2); }
+.fcard .swap { transition: opacity .35s, transform .35s; }
+.fcard .swap.out { opacity: 0; transform: translateY(6px); }
+.scan { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+.scan .beam { width: 80px; height: 2px; background: var(--border-hi); position: relative; overflow: hidden; border-radius: 2px; }
+.scan .beam::after { content: ""; position: absolute; inset: 0; width: 40%; background: var(--grad); animation: beam 1.6s ease-in-out infinite; }
+@keyframes beam { from { transform: translateX(-100%); } to { transform: translateX(260%); } }
+.scan .hex { font-family: var(--mono); color: var(--accent); font-size: 12px; min-height: 18px; }
+
+/* App window */
+.window {
+  margin: 80px auto 0; max-width: 1080px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border-hi);
+  box-shadow: 0 50px 120px -30px rgba(0, 0, 0, .8), 0 0 0 1px rgba(255, 255, 255, .02), 0 0 120px -40px rgba(124, 131, 255, .55);
+  transform: perspective(1800px) rotateX(10deg) scale(.96); transform-origin: 50% 0; transition: transform .9s cubic-bezier(.2, .7, .2, 1);
+}
+.window.flat { transform: none; }
+
+section { padding: 110px 0; }
+.eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--accent2); }
+h2 { font-size: clamp(32px, 4.6vw, 52px); line-height: 1.08; letter-spacing: -.025em; margin: 12px 0 18px; }
+.sub { color: var(--soft); font-size: 18px; max-width: 620px; }
+.center { text-align: center; }
+.center .sub { margin-inline: auto; }
+
+/* Try it */
+.drop {
+  display: block; margin-top: 44px; border: 1.5px dashed var(--border-hi); border-radius: 24px; padding: 48px 28px; text-align: center;
+  background: radial-gradient(ellipse at 50% 0%, rgba(124, 131, 255, .08), transparent 70%), var(--bg2);
+  transition: border-color .2s, background .2s, transform .2s; cursor: pointer; position: relative;
+}
+.drop.over { border-color: var(--accent2); transform: scale(1.01); background: radial-gradient(ellipse at 50% 0%, rgba(34, 211, 238, .14), transparent 70%), var(--bg2); }
+.drop .big { font-size: 22px; font-weight: 700; margin: 14px 0 6px; }
+.drop .small { color: var(--muted); font-size: 14.5px; }
+.drop .up { width: 60px; height: 60px; border-radius: 16px; margin: 0 auto; display: grid; place-items: center; background: linear-gradient(135deg, rgba(124, 131, 255, .3), rgba(34, 211, 238, .25)); color: var(--accent2); }
+.drop .up svg { width: 28px; height: 28px; }
+.drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.result { display: none; margin-top: 22px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); padding: 26px; text-align: left; }
+.result.show { display: block; animation: rise .45s cubic-bezier(.2, .7, .2, 1); }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+.result .top { display: flex; gap: 16px; align-items: center; }
+.result .ico { width: 54px; height: 54px; border-radius: 14px; display: grid; place-items: center; background: rgba(124, 131, 255, .16); color: var(--accent); flex: none; }
+.result .ico svg { width: 26px; height: 26px; }
+.result h3 { margin: 0; font-size: 22px; word-break: break-all; }
+.result .kind { color: var(--soft); }
+.banner { margin-top: 18px; padding: 12px 16px; border-radius: 12px; font-size: 15px; }
+.banner.lie { background: rgba(34, 211, 238, .1); border: 1px solid rgba(34, 211, 238, .4); }
+.banner.ok { background: rgba(52, 211, 153, .08); border: 1px solid rgba(52, 211, 153, .35); }
+.banner.unsure { background: rgba(251, 191, 36, .08); border: 1px solid rgba(251, 191, 36, .35); }
+.bytes { margin-top: 18px; font-family: var(--mono); font-size: 13.5px; color: var(--muted); overflow-x: auto; white-space: nowrap; padding-bottom: 4px; }
+.bytes span.hit { color: var(--accent2); background: rgba(34, 211, 238, .12); border-radius: 4px; padding: 1px 2px; }
+.result .meta { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; font-size: 13px; }
+.chip { padding: 4px 10px; border-radius: 99px; background: var(--raised); border: 1px solid var(--border-hi); color: var(--soft); }
+.result .fine { margin-top: 16px; color: var(--muted); font-size: 13.5px; }
+
+/* Features */
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 54px; }
+.feature { padding: 30px; border-radius: 22px; background: var(--surface); border: 1px solid var(--border); position: relative; overflow: hidden; transition: transform .3s, border-color .3s; }
+.feature:hover { transform: translateY(-4px); border-color: var(--border-hi); }
+.feature::after { content: ""; position: absolute; inset: auto -40% -60% auto; width: 260px; height: 260px; border-radius: 50%; background: var(--c, var(--accent)); opacity: .07; filter: blur(30px); }
+.feature .ico { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; background: color-mix(in srgb, var(--c, var(--accent)) 18%, transparent); color: var(--c, var(--accent)); margin-bottom: 18px; }
+.feature .ico svg { width: 22px; height: 22px; }
+.feature h3 { margin: 0 0 8px; font-size: 21px; }
+.feature p { margin: 0; color: var(--soft); }
+
+/* Matryoshka: containers inside containers */
+.nest-wrap { display: grid; grid-template-columns: 1fr 1.1fr; gap: 60px; align-items: center; }
+.nest { position: relative; aspect-ratio: 1; max-width: 520px; width: 100%; margin-inline: auto; }
+.layer {
+  position: absolute; border-radius: 26px; border: 1px solid var(--border-hi); background: rgba(18, 25, 38, .8);
+  padding: 14px 18px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
+  opacity: 0; transform: scale(.9); transition: opacity .7s, transform .7s cubic-bezier(.2, .7, .2, 1);
+}
+.nest.in .layer { opacity: 1; transform: none; }
+.layer .n { font-family: var(--mono); font-size: 14px; }
+.layer .t { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.layer:nth-child(1) { inset: 0; transition-delay: 0s; }
+.layer:nth-child(2) { inset: 14% 8% 8% 8%; border-color: rgba(124, 131, 255, .45); transition-delay: .2s; }
+.layer:nth-child(3) { inset: 28% 16% 16% 16%; border-color: rgba(124, 131, 255, .7); transition-delay: .4s; }
+.layer:nth-child(4) { inset: 42% 24% 24% 24%; border-color: rgba(34, 211, 238, .8); background: rgba(34, 211, 238, .08); transition-delay: .6s; box-shadow: 0 0 60px -10px rgba(34, 211, 238, .5); }
+.layer:nth-child(4) .n { color: var(--accent2); }
+.steps { list-style: none; padding: 0; margin: 30px 0 0; display: grid; gap: 16px; }
+.steps li { display: flex; gap: 14px; align-items: flex-start; color: var(--soft); }
+.steps li b { color: var(--text); }
+.steps .num { flex: none; width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; font-size: 13px; font-weight: 700; background: var(--raised); border: 1px solid var(--border-hi); color: var(--accent2); }
+
+/* Gallery */
+.tabs { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 40px; }
+.tab { padding: 9px 16px; border-radius: 99px; background: transparent; border: 1px solid var(--border); color: var(--soft); font: inherit; font-size: 14px; cursor: pointer; transition: all .2s; }
+.tab:hover { border-color: var(--border-hi); color: var(--text); }
+.tab[aria-selected="true"] { background: var(--surface2); border-color: var(--accent); color: var(--text); }
+.shot { margin: 30px auto 0; max-width: 1080px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border-hi); box-shadow: 0 40px 100px -30px rgba(0, 0, 0, .8); position: relative; aspect-ratio: 1440 / 900; background: var(--bg2); }
+.shot img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .5s; }
+.shot img.on { opacity: 1; }
+.caption { text-align: center; color: var(--muted); margin-top: 16px; font-size: 15px; min-height: 24px; }
+
+/* Engines */
+.engines { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 40px; }
+.engine { padding: 10px 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); font-size: 14.5px; }
+.engine small { color: var(--muted); margin-left: 6px; }
+.engine.opt { border-style: dashed; }
+.legend { text-align: center; color: var(--muted); font-size: 14px; margin-top: 18px; }
+
+/* Download */
+.dl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 50px; }
+.dl { padding: 30px; border-radius: 22px; background: var(--surface); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
+.dl.mine { border-color: var(--accent); box-shadow: 0 0 0 1px rgba(124, 131, 255, .3), 0 30px 80px -30px rgba(124, 131, 255, .6); }
+.dl .os { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 700; }
+.dl .os svg { width: 28px; height: 28px; }
+.dl .tag { font-size: 12px; font-weight: 600; color: var(--accent2); text-transform: uppercase; letter-spacing: .1em; min-height: 18px; }
+.dl a.file { display: flex; justify-content: space-between; gap: 12px; padding: 11px 14px; border-radius: 11px; background: var(--bg2); border: 1px solid var(--border); text-decoration: none; font-size: 14.5px; transition: border-color .2s, background .2s; }
+.dl a.file:hover { border-color: var(--accent); background: var(--surface2); }
+.dl a.file span:last-child { color: var(--muted); font-size: 13px; }
+.dl .note { color: var(--muted); font-size: 13.5px; margin-top: auto; padding-top: 8px; }
+.stores { margin-top: 26px; text-align: center; color: var(--muted); font-size: 15px; }
+
+/* Facts strip */
+.facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 22px; overflow: hidden; margin-top: 10px; }
+.fact { background: var(--bg2); padding: 28px 24px; }
+.fact .big { font-size: 34px; font-weight: 800; letter-spacing: -.02em; }
+.fact .what { color: var(--muted); font-size: 14.5px; }
+
+footer { border-top: 1px solid var(--border); padding: 40px 0 60px; color: var(--muted); font-size: 14.5px; }
+footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: center; }
+footer a { color: var(--soft); text-decoration: none; }
+footer a:hover { color: var(--text); }
+footer .links { display: flex; gap: 22px; }
+
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .8s, transform .8s cubic-bezier(.2, .7, .2, 1); }
+.reveal.in { opacity: 1; transform: none; }
+
+@media (max-width: 900px) {
+  nav .links { display: none; }
+  nav .btn { margin-left: auto; }
+  .features, .dl-grid { grid-template-columns: 1fr; }
+  .nest-wrap { grid-template-columns: 1fr; gap: 40px; }
+  .facts { grid-template-columns: repeat(2, 1fr); }
+  section { padding: 80px 0; }
+  .disguise { flex-direction: column; gap: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal, .layer { opacity: 1 !important; transform: none !important; }
+  .window { transform: none; }
+}
+</style>
+</head>
+<body>
+<div class="backdrop"><div class="glow a"></div><div class="glow b"></div></div>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6M9 9h2"/></symbol>
+  <symbol id="i-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="11.5" cy="11.5" r="3"/><path d="m14 14 2 2"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/><path d="m3 17.5 9 5 9-5" opacity=".5"/></symbol>
+  <symbol id="i-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7 9l5-5 5 5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/></symbol>
+  <symbol id="i-gh" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></symbol>
+  <symbol id="i-win" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.5 10.5 4.5v7H3zM11.5 4.4 21 3v8.5h-9.5zM3 12.5h7.5v7L3 18.5zM11.5 12.5H21V21l-9.5-1.4z"/></symbol>
+  <symbol id="i-mac" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.8-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8c1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.8-1.1-2.8-4.3zM14 5.3c.7-.8 1.2-2 1-3.2-1 .1-2.2.7-3 1.5-.6.7-1.2 1.9-1.1 3.1 1.2.1 2.3-.6 3.1-1.4z"/></symbol>
+  <symbol id="i-linux" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10"/><path d="M2 19h20M8 10l2.5 2L8 14M12.5 14H16"/></symbol>
+</svg>
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="img/icon.png" alt="">AnyFile</a>
+    <div class="links">
+      <a href="#try">Try it</a>
+      <a href="#features">Features</a>
+      <a href="#tour">Tour</a>
+      <a href="#download">Download</a>
+      <a href="https://github.com/xmhrnx/anyfile">GitHub</a>
+    </div>
+    <a class="btn small primary" href="#download">Download</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <span class="pill"><b>Free</b> for Windows, macOS and Linux</span>
+    <h1>Files lie. <span class="grad-text">AnyFile doesn't.</span></h1>
+    <p class="lede">A file's name is only a label. AnyFile reads what's actually inside, tells you what it really is, opens up everything packed within it, and hands each part to the app you already use for it.</p>
+    <div class="cta">
+      <a class="btn primary" id="hero-dl" href="https://github.com/xmhrnx/anyfile/releases/latest"><svg><use href="#i-down"/></svg><span>Download AnyFile</span></a>
+      <a class="btn" href="#try"><svg><use href="#i-scan"/></svg>Try it in your browser</a>
+    </div>
+    <div class="cta-note" id="hero-note">Latest release on GitHub</div>
+
+    <div class="disguise" aria-hidden="true">
+      <div class="fcard lie">
+        <div class="ico"><svg><use href="#i-file"/></svg></div>
+        <div class="label">The name says</div>
+        <div class="name swap" id="d-name">report.dat</div>
+        <div class="type swap" id="d-claim" style="color:var(--muted)">Unknown data</div>
+      </div>
+      <div class="scan"><div class="hex" id="d-hex">50 4B 03 04</div><div class="beam"></div><div>reading bytes</div></div>
+      <div class="fcard truth">
+        <div class="ico"><svg><use href="#i-doc"/></svg></div>
+        <div class="label">AnyFile says</div>
+        <div class="name swap" id="d-real">report.xlsx</div>
+        <div class="type swap" id="d-type">Excel workbook</div>
+      </div>
+    </div>
+
+    <div class="window" id="hero-window"><img src="img/mismatch.png" width="1440" height="900" alt="AnyFile showing that a file named contract.txt is really a PDF document"></div>
+  </div>
+</header>
+
+<section id="try">
+  <div class="wrap center reveal">
+    <div class="eyebrow">Try it</div>
+    <h2>Drop a file. <span class="grad-text">See what it really is.</span></h2>
+    <p class="sub">A quick taste of what the app does, right here. Your file is read by your browser and never leaves this page.</p>
+    <label class="drop" id="drop">
+      <input type="file" id="pick" aria-label="Choose a file to identify">
+      <div class="up"><svg><use href="#i-up"/></svg></div>
+      <div class="big">Drop any file here</div>
+      <div class="small">or click to choose one. Nothing is uploaded.</div>
+    </label>
+    <div class="result" id="result" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <div class="center reveal">
+      <div class="eyebrow">What it does</div>
+      <h2>Identify. Explore. Open.</h2>
+      <p class="sub">Three things, done thoroughly. AnyFile never renders content itself, so every part opens in the app made for it.</p>
+    </div>
+    <div class="features">
+      <div class="feature reveal" style="--c:#7c83ff">
+        <div class="ico"><svg><use href="#i-scan"/></svg></div>
+        <h3>Identifies anything</h3>
+        <p>Built-in signatures and structural probes go first. When they're unsure, it asks Magika and TrID, then falls back to its own analysis of text, encodings, entropy and embedded objects.</p>
+      </div>
+      <div class="feature reveal" style="--c:#22d3ee">
+        <div class="ico"><svg><use href="#i-layers"/></svg></div>
+        <h3>Explores inside</h3>
+        <p>Archives, Office files, PDFs, installers, executables, mail, disc images, media and encoded blobs. Expand anything with contents, and keep going as deep as it goes.</p>
+      </div>
+      <div class="feature reveal" style="--c:#34d399">
+        <div class="ico"><svg><use href="#i-open"/></svg></div>
+        <h3>Opens in your apps</h3>
+        <p>"Open in viewer" hands each item to the app your system uses for its real type. A spreadsheet named report.dat opens in your spreadsheet app. Save one item or extract the lot.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap nest-wrap">
+    <div class="nest" id="nest" aria-hidden="true">
+      <div class="layer"><span class="n">Kickoff.eml</span><span class="t">Email</span></div>
+      <div class="layer"><span class="n">budget.zip</span><span class="t">ZIP archive</span></div>
+      <div class="layer"><span class="n">Q3.xlsx</span><span class="t">Excel workbook</span></div>
+      <div class="layer"><span class="n">chart.png</span><span class="t">PNG image</span></div>
+    </div>
+    <div class="reveal">
+      <div class="eyebrow">All the way down</div>
+      <h2>Containers inside containers inside containers.</h2>
+      <p class="sub">Files hide files. AnyFile follows every layer, so nothing stays buried.</p>
+      <ol class="steps">
+        <li><span class="num">1</span><span><b>Open an email.</b> Its bodies and attachments become a tree.</span></li>
+        <li><span class="num">2</span><span><b>Expand the zip attached to it.</b> Every member is identified by what it contains, not its name.</span></li>
+        <li><span class="num">3</span><span><b>Expand the spreadsheet inside the zip.</b> Office files are containers too.</span></li>
+        <li><span class="num">4</span><span><b>Open the chart image</b> in your image viewer, or save it anywhere.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="tour">
+  <div class="wrap">
+    <div class="center reveal">
+      <div class="eyebrow">Take the tour</div>
+      <h2>Made to look at files closely.</h2>
+    </div>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="shot reveal" id="shot"></div>
+    <div class="caption" id="caption"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="facts reveal">
+      <div class="fact"><div class="big grad-text">16</div><div class="what">built-in engines</div></div>
+      <div class="fact"><div class="big grad-text">45</div><div class="what">interface languages</div></div>
+      <div class="fact"><div class="big grad-text">3</div><div class="what">desktop platforms</div></div>
+      <div class="fact"><div class="big grad-text">0</div><div class="what">files sent anywhere</div></div>
+    </div>
+    <div class="center reveal" style="margin-top:90px">
+      <div class="eyebrow">Under the hood</div>
+      <h2>Engines for every kind of container.</h2>
+      <p class="sub">Built in, plus optional tools AnyFile can install for you from their publishers, checked and kept to your account.</p>
+    </div>
+    <div class="engines reveal">
+      <span class="engine">ZIP, TAR and compressors <small>docx, xlsx, jar, apk, epub</small></span>
+      <span class="engine">OLE compound files <small>doc, xls, msi, msg</small></span>
+      <span class="engine">Executables <small>PE, ELF, Mach-O</small></span>
+      <span class="engine">PDF <small>attachments, images, fonts</small></span>
+      <span class="engine">Email <small>eml, mht, mbox</small></span>
+      <span class="engine">Disc images <small>ISO 9660, Joliet</small></span>
+      <span class="engine">Encoded blobs <small>base64, data: URIs</small></span>
+      <span class="engine">Signature carver <small>deep scan</small></span>
+      <span class="engine opt">7-Zip <small>7z, rar, cab, dmg, installers</small></span>
+      <span class="engine opt">FFmpeg <small>media streams, cover art</small></span>
+      <span class="engine opt">Magika <small>Google's file type model</small></span>
+      <span class="engine opt">TrID <small>18,000+ definitions</small></span>
+    </div>
+    <p class="legend">Dashed: optional engines, installed from Settings in the GitHub download.</p>
+  </div>
+</section>
+
+<section id="download">
+  <div class="wrap">
+    <div class="center reveal">
+      <div class="eyebrow">Download</div>
+      <h2>Get AnyFile. <span class="grad-text">It's free.</span></h2>
+      <p class="sub" id="dl-version">The latest release, straight from GitHub.</p>
+    </div>
+    <div class="dl-grid">
+      <div class="dl reveal" data-os="windows">
+        <div class="tag"></div>
+        <div class="os"><svg><use href="#i-win"/></svg>Windows</div>
+        <a class="file" data-asset="windows-amd64-setup.exe" href="https://github.com/xmhrnx/anyfile/releases/latest"><span>Installer, x64</span><span>.exe</span></a>
+        <a class="file" data-asset="windows-arm64-setup.exe" href="https://github.com/xmhrnx/anyfile/releases/latest"><span>Installer, ARM64</span><span>.exe</span></a>
+        <a class="file" data-asset="windows-amd64.zip" href="https://github.com/xmhrnx/anyfile/releases/latest"><span>Portable, x64</span><span>.zip</span></a>
+        <a class="file" data-asset="windows-arm64.zip" href="https://github.com/xmhrnx/anyfile/releases/latest"><span>Portable, ARM64</span><span>.zip</span></a>
+        <div class="note">The installer adds "Inspect with AnyFile" to Explorer's right-click menu.</div>
+      </div>
+      <div class="dl reveal" data-os="mac">
+        <div class="tag"></div>
+        <div class="os"><svg><use href="#i-mac"/></svg>macOS</div>
+        <a class="file" data-asset="macos-universal.dmg" href="https://github.com/xmhrnx/anyfile/releases/latest"><span>Disk image, Apple silicon and Intel</span><span>.dmg</span></a>
+        <a class="file" data-asset="macos-universal.zip" href="https://github.com/xmhrnx/anyfile/releases/latest"><span>App in a zip</span><span>.zip</span></a>
+        <div class="note">macOS 11 or later. Signed and notarized.</div>
+      </div>
+      <div class="dl reveal" data-os="linux">
+        <div class="tag"></div>
+        <div class="os"><svg><use href="#i-linux"/></svg>Linux</div>
+        <a class="file" data-asset="linux-amd64.deb" href="https://github.com/xmhrnx/anyfile/releases/latest"><span>Debian, Ubuntu, x64</span><span>.deb</span></a>
+        <a class="file" data-asset="linux-amd64.rpm" href="https://github.com/xmhrnx/anyfile/releases/latest"><span>Fedora, openSUSE, x64</span><span>.rpm</span></a>
+        <a class="file" data-asset="linux-amd64.tar.gz" href="https://github.com/xmhrnx/anyfile/releases/latest"><span>Archive, x64</span><span>.tar.gz</span></a>
+        <a class="file" data-asset="linux-arm64.deb" href="https://github.com/xmhrnx/anyfile/releases/latest"><span>ARM64 packages</span><span>.deb</span></a>
+        <div class="note">ARM64 .rpm and .tar.gz are on the <a href="https://github.com/xmhrnx/anyfile/releases/latest">release page</a>.</div>
+      </div>
+    </div>
+    <p class="stores reveal">Coming soon to the Mac App Store and the Microsoft Store. The Mac App Store version has the built-in engines only.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="img/icon.png" alt="">AnyFile</a>
+    <div class="links">
+      <a href="https://github.com/xmhrnx/anyfile">Source on GitHub</a>
+      <a href="https://github.com/xmhrnx/anyfile/releases">All releases</a>
+      <a href="https://ko-fi.com/xmhrnx">Support the project</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const $ = (s, el = document) => el.querySelector(s);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Navigation border once the page scrolls.
+  const nav = $('#nav');
+  addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 10), { passive: true });
+
+  // Reveal sections as they scroll into view.
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { threshold: .15 });
+  document.querySelectorAll('.reveal, #nest').forEach(el => io.observe(el));
+
+  // The hero window flattens as it comes into view.
+  const win = $('#hero-window');
+  const flatten = () => win.classList.toggle('flat', win.getBoundingClientRect().top < innerHeight * .55);
+  addEventListener('scroll', flatten, { passive: true }); flatten();
+
+  // The disguise: names that lie, and what's really inside.
+  const disguises = [
+    ['report.dat', 'Unknown data', '50 4B 03 04', 'report.xlsx', 'Excel workbook'],
+    ['contract.txt', 'Plain text', '25 50 44 46', 'contract.pdf', 'PDF document'],
+    ['IMG_2041', 'No extension', 'FF D8 FF E0', 'IMG_2041.jpg', 'JPEG image'],
+    ['notes.docx', 'Word document', '37 7A BC AF', 'notes.7z', '7-Zip archive'],
+    ['setup.zip', 'ZIP archive', '4D 5A 90 00', 'setup.exe', 'Windows program'],
+  ];
+  let di = 0;
+  const swap = () => {
+    di = (di + 1) % disguises.length;
+    const [name, claim, hex, real, type] = disguises[di];
+    const els = ['#d-name', '#d-claim', '#d-real', '#d-type'].map(s => $(s));
+    els.forEach(e => e.classList.add('out'));
+    $('#d-hex').textContent = '';
+    setTimeout(() => {
+      [name, claim, real, type].forEach((t, i) => { els[i].textContent = t; });
+      els.slice(0, 2).forEach(e => e.classList.remove('out'));
+      let k = 0;
+      const bytes = hex.split(' ');
+      const tick = setInterval(() => {
+        $('#d-hex').textContent = bytes.slice(0, ++k).join(' ');
+        if (k === bytes.length) { clearInterval(tick); setTimeout(() => els.slice(2).forEach(e => e.classList.remove('out')), 250); }
+      }, 160);
+    }, 350);
+  };
+  if (!reduce) setInterval(swap, 3600);
+
+  // The tour.
+  const shots = [
+    ['mismatch', 'Wrong name', 'A file named .txt is really a PDF. AnyFile says so, and opens it in your PDF viewer.'],
+    ['nested', 'Archives in archives', 'A photo inside a website backup inside a zip, three levels down.'],
+    ['office', 'Inside Office files', 'Word, Excel and PowerPoint files are containers. The images inside are one click away.'],
+    ['no-extension', 'No extension', 'A file with no extension at all, recognized as a Word document by its structure.'],
+    ['welcome', 'Start', 'Drop a file anywhere in the window, or choose one.'],
+  ];
+  const tabs = $('#tabs'), shot = $('#shot'), cap = $('#caption');
+  let cur = 0, timer;
+  shots.forEach(([file, label, text], i) => {
+    const img = new Image(1440, 900);
+    img.src = 'img/' + file + '.png'; img.alt = text; img.loading = 'lazy';
+    shot.appendChild(img);
+    const b = document.createElement('button');
+    b.className = 'tab'; b.role = 'tab'; b.textContent = label;
+    b.onclick = () => { show(i); clearInterval(timer); };
+    tabs.appendChild(b);
+  });
+  const show = i => {
+    cur = i;
+    shot.querySelectorAll('img').forEach((im, k) => im.classList.toggle('on', k === i));
+    tabs.querySelectorAll('.tab').forEach((t, k) => t.setAttribute('aria-selected', k === i));
+    cap.textContent = shots[i][2];
+  };
+  show(0);
+  if (!reduce) timer = setInterval(() => show((cur + 1) % shots.length), 5000);
+
+  // Downloads: link the latest release's files and point at this computer's.
+  const ua = navigator.userAgent;
+  const os = /Mac/.test(ua) ? 'mac' : /Win/.test(ua) ? 'windows' : /Linux|X11/.test(ua) && !/Android/.test(ua) ? 'linux' : '';
+  const mineCard = os && document.querySelector('.dl[data-os="' + os + '"]');
+  if (mineCard) { mineCard.classList.add('mine'); $('.tag', mineCard).textContent = 'For this computer'; }
+  fetch('https://api.github.com/repos/xmhrnx/anyfile/releases/latest').then(r => r.ok ? r.json() : Promise.reject()).then(rel => {
+    const find = suffix => rel.assets.find(a => a.name.endsWith(suffix));
+    document.querySelectorAll('a.file').forEach(a => {
+      const asset = find(a.dataset.asset);
+      if (asset) { a.href = asset.browser_download_url; a.lastElementChild.textContent = (asset.size / 1048576).toFixed(0) + ' MB'; }
+    });
+    $('#dl-version').textContent = 'Version ' + rel.tag_name.replace(/^v/, '') + ', straight from GitHub.';
+    const pick = { mac: 'macos-universal.dmg', windows: 'windows-amd64-setup.exe', linux: 'linux-amd64.deb' }[os];
+    const asset = pick && find(pick);
+    if (asset) {
+      $('#hero-dl').href = asset.browser_download_url;
+      $('#hero-dl span').textContent = 'Download for ' + { mac: 'macOS', windows: 'Windows', linux: 'Linux' }[os];
+      $('#hero-note').innerHTML = 'Version ' + rel.tag_name.replace(/^v/, '') + '. <a href="#download">Other platforms</a>';
+    }
+  }).catch(() => {});
+
+  // Try it: a small signature check in the browser. The app does far more.
+  const sigs = [
+    { at: 0, hex: '25504446', type: 'PDF document', ext: 'pdf' },
+    { at: 0, hex: '89504E470D0A1A0A', type: 'PNG image', ext: 'png' },
+    { at: 0, hex: 'FFD8FF', type: 'JPEG image', ext: 'jpg' },
+    { at: 0, hex: '474946383', type: 'GIF image', ext: 'gif' },
+    { at: 0, hex: '52494646', then: [8, '57454250'], type: 'WebP image', ext: 'webp' },
+    { at: 0, hex: '52494646', then: [8, '57415645'], type: 'WAV audio', ext: 'wav' },
+    { at: 0, hex: '52494646', then: [8, '41564920'], type: 'AVI video', ext: 'avi' },
+    { at: 4, hex: '66747970', brand: true },
+    { at: 0, hex: '1A45DFA3', type: 'Matroska or WebM video', ext: 'mkv' },
+    { at: 0, hex: '4F676753', type: 'Ogg media', ext: 'ogg' },
+    { at: 0, hex: '664C6143', type: 'FLAC audio', ext: 'flac' },
+    { at: 0, hex: '494433', type: 'MP3 audio', ext: 'mp3' },
+    { at: 0, hex: '504B0304', zip: true },
+    { at: 0, hex: '504B0506', type: 'Empty ZIP archive', ext: 'zip' },
+    { at: 0, hex: '377ABCAF271C', type: '7-Zip archive', ext: '7z' },
+    { at: 0, hex: '526172211A07', type: 'RAR archive', ext: 'rar' },
+    { at: 0, hex: '1F8B', type: 'Gzip compressed data', ext: 'gz' },
+    { at: 0, hex: '425A68', type: 'Bzip2 compressed data', ext: 'bz2' },
+    { at: 0, hex: 'FD377A585A00', type: 'XZ compressed data', ext: 'xz' },
+    { at: 0, hex: '28B52FFD', type: 'Zstandard compressed data', ext: 'zst' },
+    { at: 257, hex: '7573746172', type: 'TAR archive', ext: 'tar' },
+    { at: 0, hex: 'D0CF11E0A1B11AE1', type: 'OLE compound file (old Office, MSI or Outlook)', ext: 'doc' },
+    { at: 0, hex: '4D5A', type: 'Windows program or library', ext: 'exe' },
+    { at: 0, hex: '7F454C46', type: 'Linux or Unix program (ELF)', ext: 'elf' },
+    { at: 0, hex: 'CFFAEDFE', type: 'macOS program (Mach-O)', ext: 'macho' },
+    { at: 0, hex: 'CAFEBABE', type: 'Mach-O universal binary or Java class', ext: 'class' },
+    { at: 0, hex: '0061736D', type: 'WebAssembly module', ext: 'wasm' },
+    { at: 0, hex: '53514C69746520666F726D6174203300', type: 'SQLite database', ext: 'sqlite' },
+    { at: 0, hex: '38425053', type: 'Photoshop image', ext: 'psd' },
+    { at: 0, hex: '424D', type: 'BMP image', ext: 'bmp' },
+    { at: 0, hex: '49492A00', type: 'TIFF image', ext: 'tif' },
+    { at: 0, hex: '4D4D002A', type: 'TIFF image', ext: 'tif' },
+    { at: 0, hex: '00000100', type: 'Windows icon', ext: 'ico' },
+    { at: 0, hex: '774F4646', type: 'WOFF web font', ext: 'woff' },
+    { at: 0, hex: '774F4632', type: 'WOFF2 web font', ext: 'woff2' },
+    { at: 0, hex: '4F54544F', type: 'OpenType font', ext: 'otf' },
+    { at: 0, hex: '0001000000', type: 'TrueType font', ext: 'ttf' },
+    { at: 0, hex: '7B5C727466', type: 'Rich Text document', ext: 'rtf' },
+    { at: 0, hex: '4B444D', type: 'VMware disk image', ext: 'vmdk' },
+    { at: 0, hex: '78617221', type: 'XAR archive (macOS installer)', ext: 'xar' },
+    { at: 32769, hex: '4344303031', type: 'ISO disc image', ext: 'iso' },
+  ];
+  const brands = { qt: ['QuickTime movie', 'mov'], heic: ['HEIC image', 'heic'], heix: ['HEIC image', 'heic'], mif1: ['HEIF image', 'heif'], avif: ['AVIF image', 'avif'], 'M4A ': ['MPEG-4 audio', 'm4a'], '3gp4': ['3GP video', '3gp'], '3gp5': ['3GP video', '3gp'] };
+  const zipKinds = [
+    ['word/', 'Word document', 'docx'], ['xl/', 'Excel workbook', 'xlsx'], ['ppt/', 'PowerPoint presentation', 'pptx'],
+    ['mimetypeapplication/epub+zip', 'EPUB e-book', 'epub'], ['mimetypeapplication/vnd.oasis.opendocument.text', 'OpenDocument text', 'odt'],
+    ['mimetypeapplication/vnd.oasis.opendocument.spreadsheet', 'OpenDocument spreadsheet', 'ods'],
+    ['AndroidManifest.xml', 'Android app', 'apk'], ['META-INF/MANIFEST.MF', 'Java archive', 'jar'],
+  ];
+  const sameExt = { jpg: ['jpeg', 'jpe', 'jfif'], tif: ['tiff'], mp4: ['m4v'], doc: ['xls', 'ppt', 'msi', 'msg'], exe: ['dll', 'sys', 'scr', 'ocx', 'com', 'cpl', 'efi'], mkv: ['webm', 'mka'], ogg: ['oga', 'ogv', 'opus'], sqlite: ['db', 'sqlite3'], elf: ['so', 'o', ''], macho: ['dylib', ''], class: [''], gz: ['tgz'], ttf: [], tar: [] };
+
+  const hex = (b, at, n) => Array.from(b.slice(at, at + n), x => x.toString(16).padStart(2, '0').toUpperCase()).join('');
+  const has = (b, at, h) => b.length >= at + h.length / 2 && hex(b, at, h.length / 2) === h;
+
+  function identify(b) {
+    for (const s of sigs) {
+      if (!has(b, s.at, s.hex)) continue;
+      if (s.then && !has(b, s.then[0], s.then[1])) continue;
+      if (s.brand) {
+        const br = String.fromCharCode(...b.slice(8, 12));
+        const [type, ext] = brands[br] || ['MPEG-4 video', 'mp4'];
+        return { type, ext, at: 4, len: 8 };
+      }
+      if (s.zip) {
+        const text = new TextDecoder('latin1').decode(b);
+        const k = zipKinds.find(([needle]) => text.includes(needle));
+        return k ? { type: k[1], ext: k[2], at: 0, len: 4, note: 'It is a ZIP archive inside. AnyFile opens it up.' } : { type: 'ZIP archive', ext: 'zip', at: 0, len: 4 };
+      }
+      return { type: s.type, ext: s.ext, at: s.at, len: s.hex.length / 2 };
+    }
+    // No signature: is it text?
+    const sample = b.slice(0, 8192);
+    if (!sample.length) return { type: 'Empty file', ext: '' };
+    let bin = 0;
+    for (const x of sample) if (x === 0 || (x < 9) || (x > 13 && x < 32 && x !== 27)) bin++;
+    if (bin / sample.length < .01) {
+      let t;
+      try { t = new TextDecoder('utf-8', { fatal: true }).decode(sample).trimStart(); } catch { return { type: 'Text (not UTF-8)', ext: 'txt', text: true }; }
+      if (/^<\?xml/.test(t)) return { type: 'XML document', ext: 'xml', text: true };
+      if (/^<(!doctype html|html)/i.test(t)) return { type: 'HTML page', ext: 'html', text: true };
+      if (/^<svg/i.test(t)) return { type: 'SVG image', ext: 'svg', text: true };
+      if (/^[{\[]/.test(t)) { try { JSON.parse(new TextDecoder().decode(b)); return { type: 'JSON data', ext: 'json', text: true }; } catch {} }
+      if (/^#!/.test(t)) return { type: 'Script', ext: 'sh', text: true };
+      if (/^(From |Received:|Return-Path:|MIME-Version:)/m.test(t.slice(0, 400)) && /\nSubject:/i.test(t)) return { type: 'Email message', ext: 'eml', text: true };
+      return { type: 'Plain text', ext: 'txt', text: true };
+    }
+    // Entropy says something about unknown binary data.
+    const counts = new Array(256).fill(0); sample.forEach(x => counts[x]++);
+    const H = counts.reduce((h, c) => c ? h - (c / sample.length) * Math.log2(c / sample.length) : h, 0);
+    return { unknown: true, entropy: H };
+  }
+
+  const fmtSize = n => n < 1024 ? n + ' B' : n < 1048576 ? (n / 1024).toFixed(1) + ' KB' : (n / 1048576).toFixed(1) + ' MB';
+  const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  async function inspect(file) {
+    const b = new Uint8Array(await file.slice(0, 65536).arrayBuffer());
+    const r = identify(b);
+    const dot = file.name.lastIndexOf('.');
+    const ext = dot > 0 ? file.name.slice(dot + 1).toLowerCase() : '';
+    let banner;
+    if (r.unknown) {
+      banner = `<div class="banner unsure">A quick look can't tell. Entropy is ${r.entropy.toFixed(2)} bits per byte${r.entropy > 7.5 ? ', so it may be compressed or encrypted' : ''}. The app runs structure probes, Magika, TrID and a signature carver on files like this.</div>`;
+    } else {
+      const ok = ext === r.ext || (sameExt[r.ext] || []).includes(ext) || (r.text && ['txt', 'md', 'csv', 'log', 'ini', 'cfg', 'conf', 'yml', 'yaml', 'toml', 'js', 'ts', 'py', 'go', 'c', 'h', 'css', 'java', 'rs', 'sh', 'bat', 'ps1', 'htm', 'tsv', 'srt', 'vtt'].includes(ext)) || (r.ext === 'zip' && ['zip', 'docx', 'xlsx', 'pptx', 'jar', 'apk', 'epub', 'odt', 'ods', 'odp', 'xpi', 'whl', 'nupkg', 'ipa', 'cbz', 'kmz', '3mf', 'vsix'].includes(ext));
+      if (!ext && r.ext) banner = `<div class="banner lie">This file has no extension, but it's really a <b>${esc(r.type)}</b> (.${r.ext}).</div>`;
+      else if (!ok && r.ext) banner = `<div class="banner lie">This file is named <b>.${esc(ext)}</b> but it's really a <b>${esc(r.type)}</b> (.${r.ext}).</div>`;
+      else banner = `<div class="banner ok">It is what its name says.${r.note ? ' ' + r.note : ''}</div>`;
+    }
+    const n = 24, first = Array.from(b.slice(0, n), x => x.toString(16).padStart(2, '0').toUpperCase());
+    const hits = r.at === 0 && r.len ? r.len : 0;
+    const dump = first.map((h, i) => i < hits || (r.at && i >= r.at && i < r.at + r.len) ? `<span class="hit">${h}</span>` : h).join(' ');
+    const el = $('#result');
+    el.innerHTML = `
+      <div class="top"><div class="ico"><svg><use href="#i-doc"/></svg></div>
+      <div><h3>${esc(file.name)}</h3><div class="kind">${r.unknown ? 'Unidentified data' : esc(r.type)}</div></div></div>
+      ${banner}
+      <div class="bytes" title="The first bytes of the file">${dump || '(empty)'}</div>
+      <div class="meta"><span class="chip">${fmtSize(file.size)}</span>${r.ext ? `<span class="chip">.${r.ext}</span>` : ''}<span class="chip">Read in your browser</span></div>
+      <div class="fine">This page only checks a few dozen signatures. The app identifies far more, opens up everything inside, and hands each part to the right app. <a href="#download">Get AnyFile</a></div>`;
+    el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+  }
+
+  const drop = $('#drop'), pick = $('#pick');
+  pick.addEventListener('change', () => pick.files[0] && inspect(pick.files[0]));
+  ['dragenter', 'dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', e => e.dataTransfer.files[0] && inspect(e.dataTransfer.files[0]));
+  // Dropping a file elsewhere on the page shouldn't navigate away from it.
+  addEventListener('dragover', e => e.preventDefault());
+  addEventListener('drop', e => { e.preventDefault(); if (e.dataTransfer.files[0] && !drop.contains(e.target)) { inspect(e.dataTransfer.files[0]); $('#try').scrollIntoView(); } });
+})();
+</script>
+</body>
+</html>
